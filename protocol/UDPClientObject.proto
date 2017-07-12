@@ -1,0 +1,23 @@
+syntax="proto3";
+
+package com.gxf.udp.proto;
+
+option java_outer_classname = "UDPClientObject_Pb";
+
+message UDPClientObject{
+    int32 sessionID = 1;
+    RequestCommand command = 2;
+    bytes params = 3;
+}
+
+//客户端发出的请求类型
+enum RequestCommand{
+    CMD_executeShell = 0;
+    CMD_runInstance = 1;
+    CMD_runSentinel = 2;
+    CMD_runRedisCommand = 3;
+    CMD_isPortUsed = 4;
+    CMD_createRemoteFile = 5;
+
+    CMD_reportData = 6;
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="cloud_agent" />
+        <module name="cloud_client" />
+        <module name="cloud_common" />
+        <module name="cloud_test" />
+        <module name="cloud_udp" />
+        <module name="cloud_web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Agent" target="1.5" />
+      <module name="cloud_agent" target="1.5" />
+      <module name="cloud_client" target="1.5" />
+      <module name="cloud_common" target="1.5" />
+      <module name="cloud_test" target="1.5" />
+      <module name="cloud_udp" target="1.5" />
+      <module name="cloud_web" target="1.5" />
+      <module name="RedisCloud" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

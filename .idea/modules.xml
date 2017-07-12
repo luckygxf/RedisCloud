@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/RedisCloud.iml" filepath="$PROJECT_DIR$/RedisCloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud_agent/cloud_agent.iml" filepath="$PROJECT_DIR$/cloud_agent/cloud_agent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud_client/cloud_client.iml" filepath="$PROJECT_DIR$/cloud_client/cloud_client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud_common/cloud_common.iml" filepath="$PROJECT_DIR$/cloud_common/cloud_common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud_test/cloud_test.iml" filepath="$PROJECT_DIR$/cloud_test/cloud_test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud_udp/cloud_udp.iml" filepath="$PROJECT_DIR$/cloud_udp/cloud_udp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cloud_web/cloud_web.iml" filepath="$PROJECT_DIR$/cloud_web/cloud_web.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package com.gxf.udp.proto;
+
+option java_outer_classname = "WebRequest_Pb";
+
+message StartRedisInstanceAtPortParamObject{
+    int32 port = 1;
+    string runShell = 2;
+    int32 type = 3;
+    string password = 4;
+}
+
+message ExecuteShellParamObject{
+    string shell = 1;
+}
+
+message ExecuteRedisCommandParamObject{
+    string runShell = 1;
+}
+
+message RunInstanceParamObject{
+    int32 port = 1;
+    int32 type = 2;
+    string password = 3;
+    string configFileName = 4;
+    string redisConfigs = 5;
+    string runShell = 6;
+    string machinePath = 7;
+}
+
+message RunSentinelParamObject{
+    int32 sentinelPort = 1;
+    string configFileName = 2;
+    string sentinelConfigs = 3;
+    string runShell = 4;
+    string machinePath = 5;
+}
+
+message IsPortUsedParamObject{
+    int32 port = 1;
+}
+
+message CreateRemoteFileParamObject{
+    string fileName = 1;
+    string content = 2;
+    string filePath = 3;
+}

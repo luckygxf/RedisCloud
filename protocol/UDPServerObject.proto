@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package com.gxf.udp.proto;
+
+option java_outer_classname="UDPServerObject_Pb";
+
+//udp server return object
+message UDPServerObject{
+    int32 sessionID = 1;
+
+    bytes result = 2;
+
+    //1 success 2 fail
+    int32 resultCode = 3;
+}

@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact name="cloud_agent:jar">
+    <output-path>E:/cloud_agent_jar</output-path>
+    <root id="root">
+      <element id="archive" name="cloud_agent.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/cloud_agent/src/main/resources/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="cloud_agent" />
+        <element id="module-output" name="cloud_common" />
+        <element id="module-output" name="cloud_udp" />
+      </element>
+      <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.3.1" />
+    </root>
+  </artifact>
+</component>
