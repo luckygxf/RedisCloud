@@ -2,7 +2,7 @@ package com.gxf.agent;
 
 import com.google.protobuf.ByteString;
 import com.gxf.agent.commandExec.CommandExec;
-import com.gxf.agent.constants.UDPResponseCode;
+import com.gxf.common.constants.UDPResponseCode;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.common.util.PropertiesHelper;
 import com.gxf.udp.proto.UDPClientObject_Pb;

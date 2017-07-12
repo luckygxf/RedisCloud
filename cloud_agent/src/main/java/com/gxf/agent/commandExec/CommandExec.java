@@ -1,11 +1,18 @@
 package com.gxf.agent.commandExec;
 
 
-import com.gxf.agent.util.StringUtil;
+import com.gxf.agent.protocol.MachineProtocol;
+import com.gxf.agent.util.IdempotentConfirmer;
+import com.gxf.common.util.ListUtil;
+import com.gxf.common.util.StringUtil;
+import redis.clients.jedis.Jedis;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -15,6 +22,42 @@ public class CommandExec {
     private static ExecutorService executorService = Executors.newFixedThreadPool(4);
 
 
+    /**
+     * 创建配置文件
+     * */
+    public static boolean createConfigFile(String fileName, List<String> content, String machinePath){
+        if(StringUtil.isEmpty(fileName) || StringUtil.isEmpty(machinePath) || ListUtil.isEmpty(content)){
+            return false;
+        }
+
+        String configPath = machinePath + fileName;
+        File configDir = new File(machinePath);
+        if(!configDir.exists()){
+            configDir.mkdirs();
+        }
+
+        Path path = Paths.get(configPath);
+        try{
+            BufferedWriter bufferedWriter = Files.newBufferedWriter(path, Charset.forName(MachineProtocol.ENCODING_UTF8));
+            for(String line : content){
+                bufferedWriter.write(line);
+                bufferedWriter.newLine();
+            }
+            if (bufferedWriter != null){
+                bufferedWriter.close();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+
+    }
+
+    /**
+     * 端口号是否被占用
+     * */
     public static boolean isPortUsed(int port){
         String psCmd = "/usr/sbin/lsof -i:%s";
         psCmd = String.format(psCmd, port);
@@ -135,6 +178,25 @@ public class CommandExec {
 
         if(!StringUtil.isEmpty(errorMessage.toString())){
             System.out.println(errorMessage.toString());
+        }
+    }
+
+    /**
+     * 判断端口是否有redis实例在运行
+     * */
+    public static boolean isRedisRun(int port, final String password, int type){
+        final Jedis jedis = new Jedis("127.0.0.1", port);
+        jedis.auth(password);
+        try{
+            return new IdempotentConfirmer(){
+                @Override
+                public boolean execute(){
+                    String pong = jedis.ping();
+                    return null != pong && pong.equals("PONG");
+                }
+            }.run();
+        } finally {
+            jedis.close();
         }
     }
 }

@@ -24,7 +24,7 @@ message RunInstanceParamObject{
     int32 type = 2;
     string password = 3;
     string configFileName = 4;
-    string redisConfigs = 5;
+    repeated string redisConfigs = 5;
     string runShell = 6;
     string machinePath = 7;
 }

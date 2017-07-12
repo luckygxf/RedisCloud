@@ -1,4 +1,4 @@
-package com.gxf.agent.util;
+package com.gxf.common.util;
 
 /**
  * Created by 58 on 2017/7/11.

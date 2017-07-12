@@ -1,4 +1,4 @@
-package com.gxf.agent.constants;
+package com.gxf.common.constants;
 
 /**
  * Created by 58 on 2017/7/11.
