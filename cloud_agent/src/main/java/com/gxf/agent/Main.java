@@ -5,12 +5,15 @@ import com.gxf.agent.commandExec.CommandExec;
 import com.gxf.common.constants.UDPResponseCode;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.common.util.PropertiesHelper;
+import com.gxf.controller.RedisInstanceDeployController;
 import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.udp.proto.WebRequest_Pb;
 import com.gxf.udp.socket.UdpServerSocket;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -51,6 +54,43 @@ public class Main {
 
                 }catch (Exception e){
                     e.printStackTrace();
+                    resultCode = UDPResponseCode.FAIL;
+                    serverResponse(udpServerSocket, udpClientObject, result, resultCode);
+                }
+            }else if(udpClientObject.getCommand().equals(UDPClientObject_Pb.RequestCommand.CMD_runInstance)){
+                System.out.println("execute cmd_runinstance start..");
+                int port = 0;
+                int type = 0;
+                String password = "";
+                String confFileName = "";
+                List<String> redisConfigs = new ArrayList<String>();
+                String runShell = "";
+                String machinePath = "";
+                byte[] result = {1};
+                try{
+                    WebRequest_Pb.RunInstanceParamObject runInstanceParamObject = WebRequest_Pb.RunInstanceParamObject.parseFrom(udpClientObject.getParams());
+                    port = runInstanceParamObject.getPort();
+                    type = runInstanceParamObject.getType();
+                    password = runInstanceParamObject.getPassword();
+                    confFileName = runInstanceParamObject.getConfigFileName();
+                    redisConfigs = runInstanceParamObject.getRedisConfigsList();
+                    runShell = runInstanceParamObject.getRunShell();
+                    machinePath = runInstanceParamObject.getMachinePath();
+
+                    boolean isSuccess = RedisInstanceDeployController.runInstance(port, type, password, confFileName, redisConfigs, runShell, machinePath);
+                    if(isSuccess){
+                        System.out.println("CMD_runInstance success");
+                    }else{
+                        System.out.println("CMD_runInstance failed");
+                        result[0] = 2;
+                        resultCode = UDPResponseCode.FAIL;
+                    }
+
+                    serverResponse(udpServerSocket, udpClientObject, result, resultCode);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    System.out.println("CMD_runInstance error");
+                    result[0] = 2;
                     resultCode = UDPResponseCode.FAIL;
                     serverResponse(udpServerSocket, udpClientObject, result, resultCode);
                 }
