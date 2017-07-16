@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gxf.dao.InstanceConfigDao">
+    <!--<resultMap id="instanceConfigMap" type="com.gxf.entity.InstanceConfig">-->
+        <!--<id property="id" column="id"/>-->
+        <!--<result property="configKey" column="config_key"/>-->
+        <!--<result property="configValue" column="config_value"/>-->
+        <!--<result property="info" column="info"/>-->
+        <!--<result property="updateTime" column="update_time"/>-->
+        <!--<result property="type" column="type"/>-->
+        <!--<result property="status" column="status"/>-->
+    <!--</resultMap>-->
+
+    <select id="queryAll" resultType="com.gxf.entity.InstanceConfig">
+        select * from instance_config
+    </select>
+</mapper>
