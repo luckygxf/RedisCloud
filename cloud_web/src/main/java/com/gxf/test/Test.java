@@ -5,6 +5,11 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.communication.AgentCommunication;
 import com.gxf.udp.proto.UDPServerObject_Pb;
+import com.gxf.util.FileUtil;
+import com.gxf.util.PathUtil;
+import redis.clients.jedis.Jedis;
+
+import java.util.List;
 
 /**
  * Created by 58 on 2017/7/11.
@@ -12,19 +17,12 @@ import com.gxf.udp.proto.UDPServerObject_Pb;
 public class Test {
     private static String ip = "192.168.211.129";
 //    private static String ip = "127.0.0.1";
-    private static int port = 6379;
+    private static int port = 6040;
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
-        AgentCommunication agentCommunication = new AgentCommunication();
-        boolean isUsed = agentCommunication.isPortUsed(ip, port);
-
-        if(isUsed){
-            System.out.println("端口被占用");
-        }else{
-            System.out.println("端口可用");
-        }
-
-//        transfer();
+        String path = PathUtil.getFilePath("redis_min.conf");
+        System.out.println("path = " + path);
+        readFile(path);
     }
 
     private static void transfer() throws InvalidProtocolBufferException {
@@ -40,5 +38,19 @@ public class Test {
         UDPServerObject_Pb.UDPServerObject udpServerObject = UDPServerObject_Pb.UDPServerObject.parseFrom(data);
         System.out.println(udpServerObject.getResultCode());
 
+    }
+
+    public static void testConnectRedis(){
+        Jedis jedis = new Jedis(ip, port);
+        jedis.set("name", "guanxiangfei");
+        String value = jedis.get("name");
+        System.out.println("value = " + value);
+    }
+
+    public static void readFile(String filePath){
+        List<String> lines = FileUtil.getFileContent(filePath);
+        for(String line : lines){
+            System.out.println(line);
+        }
     }
 }

@@ -3,7 +3,7 @@ package com.gxf.entity;
 import java.util.Date;
 
 /**
- * Created by 58 on 2017/7/15.
+ * Created by gxf on 2017/7/15.
  * redis实例配置模板
  */
 public class InstanceConfig {
