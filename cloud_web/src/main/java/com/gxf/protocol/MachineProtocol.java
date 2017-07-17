@@ -1,4 +1,4 @@
-package com.gxf.protocal;
+package com.gxf.protocol;
 
 /**
  * Created by 58 on 2017/7/17.

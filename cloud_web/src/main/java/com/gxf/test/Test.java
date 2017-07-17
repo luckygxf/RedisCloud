@@ -3,7 +3,10 @@ package com.gxf.test;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.gxf.common.util.ArrayUtil;
+import com.gxf.common.util.ConstUtil;
 import com.gxf.communication.AgentCommunication;
+import com.gxf.redis.RedisDeployCenter;
+import com.gxf.redis.redisImpl.RedisDeployCenterImpl;
 import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.util.FileUtil;
 import com.gxf.util.PathUtil;
@@ -17,12 +20,12 @@ import java.util.List;
 public class Test {
     private static String ip = "192.168.211.129";
 //    private static String ip = "127.0.0.1";
-    private static int port = 6040;
+    private static int port = 6041;
+    //TODO:这里可以考虑用spring注入
+    private static RedisDeployCenter redisDeployCenter = new RedisDeployCenterImpl();
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
-        String path = PathUtil.getFilePath("redis_min.conf");
-        System.out.println("path = " + path);
-        readFile(path);
+        deployRedisInstance(ip, port, ConstUtil.CACHE_REDIS_STANDALONE);
     }
 
     private static void transfer() throws InvalidProtocolBufferException {
@@ -52,5 +55,9 @@ public class Test {
         for(String line : lines){
             System.out.println(line);
         }
+    }
+
+    public static boolean deployRedisInstance(String host, int port, int type){
+        return redisDeployCenter.deployRedisInstance(host, port, ConstUtil.CACHE_REDIS_STANDALONE);
     }
 }
