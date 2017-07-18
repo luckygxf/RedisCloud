@@ -25,7 +25,6 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
 
     @Override
     public boolean deployRedisInstance(String host, int port, int type) {
-        String redisConfFileName = RedisProtocol.getConfigFileName(port, type);
         List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig();
         //redis-server %s &
         String shellTemplate = "redis-server %s &";
@@ -34,6 +33,11 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         String runShell = String.format(shellTemplate, machinePath + configName);
         //password
         String password = PasswordUtil.genRandomNum(16);
+        String passConfig = "requirepass " + password;
+        redisConfigs.add(passConfig);
+        //port
+        String portConfig = "port " + port;
+        redisConfigs.add(portConfig);
 
         boolean isSuccess = AgentCommunication.runInstance(host, port, type, password, configName, redisConfigs, runShell, machinePath);
         if(isSuccess){

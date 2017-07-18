@@ -186,8 +186,9 @@ public class CommandExec {
      * */
     public static boolean isRedisRun(int port, final String password, int type){
         final Jedis jedis = new Jedis("127.0.0.1", port);
-        jedis.auth(password);
+
         try{
+            jedis.auth(password);
             return new IdempotentConfirmer(){
                 @Override
                 public boolean execute(){
@@ -197,6 +198,7 @@ public class CommandExec {
             }.run();
         } finally {
             jedis.close();
+            return false;
         }
     }
 
