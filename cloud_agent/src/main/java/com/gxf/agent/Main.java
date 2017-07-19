@@ -94,6 +94,8 @@ public class Main {
                     resultCode = UDPResponseCode.FAIL;
                     serverResponse(udpServerSocket, udpClientObject, result, resultCode);
                 }
+            }else if (udpClientObject.getCommand().equals(UDPClientObject_Pb.RequestCommand.CMD_runSentinel)){
+
             }
         }
     } //main
