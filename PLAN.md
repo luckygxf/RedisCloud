@@ -1,3 +1,8 @@
+1. 通过web管理平台启动master、slave、3个sentinel
+    1.1 master 端口号：6340
+    1.2 slave 端口号:6341
+    1.3 sentinel 端口号: 26340、26341、26342
+------------------------------------------------
 1. 通过web管理平台指定端口，在指定的端口起一个redis实例
     1.1 配置文件名：redis%d.conf
     1.2 配置文件路径:/work/redis%d/redis%d.conf

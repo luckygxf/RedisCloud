@@ -19,4 +19,9 @@ public interface RedisDeployCenter {
      * 根据端口号，启动redis实例
      * */
     boolean deployRedisInstance(String host, int port, int type);
+
+    /**
+     * 针对虚拟机部署，特殊需求
+     * */
+    boolean deploySentinelModel(String masterHost, String[] slaveHosts, int type, String[] sentinelIps, int masterPort, int slavePort, int sentinelPorts[], List<WebJedis> jedisList);
 }

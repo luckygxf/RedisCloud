@@ -11,6 +11,7 @@ import com.gxf.util.SentinelConfigUtil;
 import com.gxf.webJedis.WebJedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.management.Agent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,26 +26,20 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
     @Override
     public boolean deploySentinelInstance(long appId, String masterHost, String[] slaveHosts, int maxMemory, String[] sentinelIps, int appPort, List<WebJedis> jedisList) {
         String redisConfigFileName = RedisProtocol.getConfigFileName(appPort, ConstUtil.CACHE_REDIS_STANDALONE);
-        List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig();
+//        List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig();
 
         return true;
     }
 
     @Override
     public boolean deployRedisInstance(String host, int port, int type) {
-        List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig();
         //redis-server %s &
         String shellTemplate = "redis-server %s &";
         String machinePath = RedisProtocol.getMachinePath(port, type);
         String configName = RedisProtocol.getConfigFileName(port, type);
         String runShell = String.format(shellTemplate, machinePath + configName);
-        //password
         String password = PasswordUtil.genRandomNum(16);
-        String passConfig = "requirepass " + password;
-        redisConfigs.add(passConfig);
-        //port
-        String portConfig = "port " + port;
-        redisConfigs.add(portConfig);
+        List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(port, password);
 
         boolean isSuccess = AgentCommunication.runInstance(host, port, type, password, configName, redisConfigs, runShell, machinePath);
         if(isSuccess){
@@ -54,6 +49,68 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         }
         return isSuccess;
 
+    }
+
+    /**
+     * TODO:待完成
+     * */
+    @Override
+    public boolean deploySentinelModel(String masterHost, String[] slaveHosts,int type, String[] sentinelIps, int masterPort, int slavePort, int[] sentinelPorts, List<WebJedis> jedisList) {
+        //1. 启动master实例
+        String configFileName = RedisProtocol.getConfigFileName(masterPort, type);
+        String password = PasswordUtil.genRandomNum(16);
+        List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(masterPort, password);
+        String runShell = RedisProtocol.getRunShell(masterPort, type);
+        String machinePath = RedisProtocol.getMachinePath(masterPort, type);
+        boolean isPortUsed = AgentCommunication.isPortUsed(masterHost, masterPort);
+        if (isPortUsed) {
+            logger.error("port:{} is already run in the host:{}", masterPort, masterHost);
+            return false;
+        }
+        boolean isMasterRun = AgentCommunication.runInstance(masterHost, masterPort,type, password, configFileName, redisConfigs, runShell, machinePath);
+        if(!isMasterRun){
+            logger.error("runInstance, masterHost:{}, masterPort:{} is failed.", masterHost, masterPort);
+            return false;
+        }
+        WebJedis webJedis = new WebJedis(masterHost, masterPort);
+        try{
+            webJedis.auth(password);
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+            return false;
+        }
+        jedisList.add(webJedis);
+        logger.info("runInstance, masterHost:{}, masterPort:{} success", masterHost, masterPort);
+        //1.2 启动slave实例
+        String slaveHost = slaveHosts[0];
+        redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(slavePort, password);
+        runShell = RedisProtocol.getRunShell(slavePort, type);
+        machinePath = RedisProtocol.getMachinePath(slavePort, type);
+        configFileName = RedisProtocol.getConfigFileName(slavePort, type);
+
+        isPortUsed = AgentCommunication.isPortUsed(slaveHost, slavePort);
+        if(isPortUsed){
+            logger.error("port:{} is already used in the host:{}", slavePort, slaveHost);
+            return false;
+        }
+        boolean isSlaveRun = AgentCommunication.runInstance(slaveHost, slavePort, type, password, configFileName, redisConfigs, runShell, machinePath);
+        if(!isSlaveRun){
+            logger.error("runInstance, slaveHost:{}, slavePort, failed.", slaveHost, slavePort);
+            return false;
+        }
+        webJedis = new WebJedis(slaveHost, slavePort);
+        try{
+            webJedis.auth(password);
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+            return false;
+        }
+        jedisList.add(webJedis);
+        logger.info("runInstance, slaveHost:{}, slavePort:{} success", slaveHost, slavePort);
+
+
+
+        return true;
     }
 
     /**
@@ -108,8 +165,21 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         return true;
     }
 
+    /**
+     * 生成mastername
+     * */
     private String getMasterName(String host, int port){
         String masterSentinelName = String.format("sentinel-%S-%s", host, port);
         return masterSentinelName;
+    }
+
+    /**
+     * 设置主从关系
+     * TODO:待完成
+     * */
+    private boolean slaveOf(String masterHost, int masterPort, String slaveHost,
+                            int slavePort, String password){
+
+        return true;
     }
 }
