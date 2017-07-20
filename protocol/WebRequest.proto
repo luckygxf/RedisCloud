@@ -32,7 +32,7 @@ message RunInstanceParamObject{
 message RunSentinelParamObject{
     int32 sentinelPort = 1;
     string configFileName = 2;
-    string sentinelConfigs = 3;
+    repeated string sentinelConfigs = 3;
     string runShell = 4;
     string machinePath = 5;
 }

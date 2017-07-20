@@ -6,7 +6,8 @@ import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.proto.WebRequest_Pb;
 import com.gxf.udp.socket.ResultData;
 import com.gxf.udp.socket.UDPClientSocket;
-import com.sun.org.apache.regexp.internal.RE;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * 发送消息给agent
  */
 public class AgentCommunication {
+    private static Logger logger = LoggerFactory.getLogger(AgentCommunication.class);
 
     /**
      * 在机器指定端口启动redis实例
@@ -73,6 +75,39 @@ public class AgentCommunication {
         return result;
     }
 
+    /**
+     * 在指定端口运行哨兵
+     * */
+    public static boolean runSentinel(String sentinelHost, int sentinelPort, String confFileName, List<String> sentinelConfigs, String runShell, String machinePath){
+        UDPClientObject_Pb.UDPClientObject.Builder udpClientObjectBuilder = UDPClientObject_Pb.UDPClientObject.newBuilder();
+        udpClientObjectBuilder.setCommand(UDPClientObject_Pb.RequestCommand.CMD_runSentinel);
+
+        WebRequest_Pb.RunSentinelParamObject.Builder runSentinelParamObjectBuilder = WebRequest_Pb.RunSentinelParamObject.newBuilder();
+        runSentinelParamObjectBuilder.setSentinelPort(sentinelPort);
+        runSentinelParamObjectBuilder.setConfigFileName(confFileName);
+        runSentinelParamObjectBuilder.addAllSentinelConfigs(sentinelConfigs);
+        runSentinelParamObjectBuilder.setRunShell(runShell);
+        runSentinelParamObjectBuilder.setMachinePath(machinePath);
+
+        udpClientObjectBuilder.setParams(runSentinelParamObjectBuilder.build().toByteString());
+
+        try{
+            ResultData resultData = UDPClientSocket.sendMessage(sentinelHost, ConstUtil.AGENT_UDP_PORT, udpClientObjectBuilder);
+            if(resultData.getResultCode() == UDPResponseCode.SUCCESS){
+                logger.info("runSentinel in ip:{} at port:{} success", sentinelHost, sentinelPort);
+                byte[] result = resultData.getResult();
+                if(result[0] == 1){
+                    return true;
+                }
+            }else{
+                logger.error("runSentinel in ip:{} at port{} failed.", sentinelHost, sentinelPort);
+            }
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
+
+        return false;
+    }
 
 
 }

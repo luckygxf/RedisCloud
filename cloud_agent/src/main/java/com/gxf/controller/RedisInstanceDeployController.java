@@ -42,7 +42,6 @@ public class RedisInstanceDeployController {
      * 启动sentinel实例
      * machinePath用于创建配置文件，文件路径
      *
-     * TODO:待完成
      * */
     public static boolean runSentinel(int port, String configFileName, List<String> confis, String runShell
                                         ,String machinePath){
@@ -54,7 +53,12 @@ public class RedisInstanceDeployController {
         }
         logger.info("runSentinel: create config file:{} success", machinePath + configFileName);
         boolean isStartSuccess = MachineCenter.startRedisAtPort(port, "", BaseConstant.CACHE_REDIS_SENTINEL, runShell);
+        if(!isStartSuccess){
+            logger.error("runSentinel:exec shell = {} error" , runShell);
+            return false;
+        }
 
+        logger.info("runSentinel: start redis nstance at port:{} success", port);
         return true;
     }
 

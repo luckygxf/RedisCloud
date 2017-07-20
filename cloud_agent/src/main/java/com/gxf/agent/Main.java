@@ -10,6 +10,8 @@ import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.udp.proto.WebRequest_Pb;
 import com.gxf.udp.socket.UdpServerSocket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.Properties;
  * Created by 58 on 2017/7/11.
  */
 public class Main {
+    private static Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws IOException {
         Properties agentProperties = PropertiesHelper.loadPropertiesFile("agent.properties");
@@ -95,7 +98,41 @@ public class Main {
                     serverResponse(udpServerSocket, udpClientObject, result, resultCode);
                 }
             }else if (udpClientObject.getCommand().equals(UDPClientObject_Pb.RequestCommand.CMD_runSentinel)){
+                logger.info("execute cmd_runSentinel start..");
+                int sentinelPort = 0;
+                String configFileName = "";
+                List<String> sentinelConfigs;
+                String runShell = "";
+                String machinePath = "";
+                byte[] result = {1};
+                try{
+                    WebRequest_Pb.RunSentinelParamObject runSentinelParamObject = WebRequest_Pb.RunSentinelParamObject.parseFrom(udpClientObject.getParams());
+                    sentinelPort = runSentinelParamObject.getSentinelPort();
+                    configFileName = runSentinelParamObject.getConfigFileName();
+                    sentinelConfigs = runSentinelParamObject.getSentinelConfigsList();
+                    runShell = runSentinelParamObject.getRunShell();
+                    machinePath = runSentinelParamObject.getMachinePath();
+                    logger.info("sentinelPort = {}", sentinelPort);
+                    logger.info("configFileName = {}", configFileName);
+                    logger.info("sentinelConfigs = {}", sentinelConfigs);
+                    logger.info("runShell = {}", runShell);
+                    logger.info("machinePath = {}", machinePath);
 
+                    boolean isSuccess = RedisInstanceDeployController.runSentinel(sentinelPort, configFileName, sentinelConfigs, runShell, machinePath);
+                    if(isSuccess){
+                        logger.info("CMD_runSentienl success");
+                    }else{
+                        logger.error("CMD_runSentinel failed.");
+                        result[0] = 2;  //failed
+                        resultCode = UDPResponseCode.FAIL;
+                    }
+                    serverResponse(udpServerSocket, udpClientObject, result, resultCode);
+                }catch (Exception e){
+                    logger.error(e.getMessage(), e);
+                    result[0] = 2;  //failed
+                    resultCode = UDPResponseCode.FAIL;
+                    serverResponse(udpServerSocket, udpClientObject, result, resultCode);
+                }
             }
         }
     } //main

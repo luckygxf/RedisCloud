@@ -12,15 +12,25 @@ import java.util.Date;
  */
 public class RedisProtocol {
     private static final String SENTINEL_REDIS_CONFIG = "redis%d.conf";
+    private static final String SENTINEL_CONFIG = "sentinel%d.conf";
     private static final String SENTINEL_SHELL = ConstUtil.SENTINEL_CMD_PREFIX+"redis-server %s --sentinel > " + "%s" + "redis-sentinel-%d-%s.log 2>&1 &";
-
+    private static final String CLUSTER_CONFIG = "rcn%d.conf";
     private static final String RUN_SHELL = "%sredis-server %s > " + "%s" + "redis-%d-%s.log 2>&1 &";
+    public static final int REDIS_SENTINEL_BASE_PORT = 20000;
 
     /**
      * 获取sentinel模式下redis实例配置文件名
      * */
     public static String getConfigFileName(int port, int type){
-        return String.format(SENTINEL_REDIS_CONFIG, port);
+        if(TypeUtil.isRedisCluster(type)){
+            return String.format(CLUSTER_CONFIG, port);
+        }else if(TypeUtil.isRedisSentinel(type)){
+            return String.format(SENTINEL_CONFIG, port);
+        }else if(TypeUtil.isRedisStandalone(type)){
+            return String.format(SENTINEL_REDIS_CONFIG, port);
+        }
+
+        return EmptyObjectConst.EMPTY_STRING;
     }
 
     /**

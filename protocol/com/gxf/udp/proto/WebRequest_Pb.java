@@ -3084,14 +3084,23 @@ public final class WebRequest_Pb {
         getConfigFileNameBytes();
 
     /**
-     * <code>string sentinelConfigs = 3;</code>
+     * <code>repeated string sentinelConfigs = 3;</code>
      */
-    java.lang.String getSentinelConfigs();
+    java.util.List<java.lang.String>
+        getSentinelConfigsList();
     /**
-     * <code>string sentinelConfigs = 3;</code>
+     * <code>repeated string sentinelConfigs = 3;</code>
+     */
+    int getSentinelConfigsCount();
+    /**
+     * <code>repeated string sentinelConfigs = 3;</code>
+     */
+    java.lang.String getSentinelConfigs(int index);
+    /**
+     * <code>repeated string sentinelConfigs = 3;</code>
      */
     com.google.protobuf.ByteString
-        getSentinelConfigsBytes();
+        getSentinelConfigsBytes(int index);
 
     /**
      * <code>string runShell = 4;</code>
@@ -3127,7 +3136,7 @@ public final class WebRequest_Pb {
     private RunSentinelParamObject() {
       sentinelPort_ = 0;
       configFileName_ = "";
-      sentinelConfigs_ = "";
+      sentinelConfigs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       runShell_ = "";
       machinePath_ = "";
     }
@@ -3170,8 +3179,11 @@ public final class WebRequest_Pb {
             }
             case 26: {
               java.lang.String s = input.readStringRequireUtf8();
-
-              sentinelConfigs_ = s;
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                sentinelConfigs_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              sentinelConfigs_.add(s);
               break;
             }
             case 34: {
@@ -3194,6 +3206,9 @@ public final class WebRequest_Pb {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          sentinelConfigs_ = sentinelConfigs_.getUnmodifiableView();
+        }
         makeExtensionsImmutable();
       }
     }
@@ -3209,6 +3224,7 @@ public final class WebRequest_Pb {
               com.gxf.udp.proto.WebRequest_Pb.RunSentinelParamObject.class, com.gxf.udp.proto.WebRequest_Pb.RunSentinelParamObject.Builder.class);
     }
 
+    private int bitField0_;
     public static final int SENTINELPORT_FIELD_NUMBER = 1;
     private int sentinelPort_;
     /**
@@ -3253,37 +3269,32 @@ public final class WebRequest_Pb {
     }
 
     public static final int SENTINELCONFIGS_FIELD_NUMBER = 3;
-    private volatile java.lang.Object sentinelConfigs_;
+    private com.google.protobuf.LazyStringList sentinelConfigs_;
     /**
-     * <code>string sentinelConfigs = 3;</code>
+     * <code>repeated string sentinelConfigs = 3;</code>
      */
-    public java.lang.String getSentinelConfigs() {
-      java.lang.Object ref = sentinelConfigs_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        sentinelConfigs_ = s;
-        return s;
-      }
+    public com.google.protobuf.ProtocolStringList
+        getSentinelConfigsList() {
+      return sentinelConfigs_;
     }
     /**
-     * <code>string sentinelConfigs = 3;</code>
+     * <code>repeated string sentinelConfigs = 3;</code>
+     */
+    public int getSentinelConfigsCount() {
+      return sentinelConfigs_.size();
+    }
+    /**
+     * <code>repeated string sentinelConfigs = 3;</code>
+     */
+    public java.lang.String getSentinelConfigs(int index) {
+      return sentinelConfigs_.get(index);
+    }
+    /**
+     * <code>repeated string sentinelConfigs = 3;</code>
      */
     public com.google.protobuf.ByteString
-        getSentinelConfigsBytes() {
-      java.lang.Object ref = sentinelConfigs_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        sentinelConfigs_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+        getSentinelConfigsBytes(int index) {
+      return sentinelConfigs_.getByteString(index);
     }
 
     public static final int RUNSHELL_FIELD_NUMBER = 4;
@@ -3372,8 +3383,8 @@ public final class WebRequest_Pb {
       if (!getConfigFileNameBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, configFileName_);
       }
-      if (!getSentinelConfigsBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, sentinelConfigs_);
+      for (int i = 0; i < sentinelConfigs_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, sentinelConfigs_.getRaw(i));
       }
       if (!getRunShellBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, runShell_);
@@ -3395,8 +3406,13 @@ public final class WebRequest_Pb {
       if (!getConfigFileNameBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, configFileName_);
       }
-      if (!getSentinelConfigsBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, sentinelConfigs_);
+      {
+        int dataSize = 0;
+        for (int i = 0; i < sentinelConfigs_.size(); i++) {
+          dataSize += computeStringSizeNoTag(sentinelConfigs_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getSentinelConfigsList().size();
       }
       if (!getRunShellBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, runShell_);
@@ -3424,8 +3440,8 @@ public final class WebRequest_Pb {
           == other.getSentinelPort());
       result = result && getConfigFileName()
           .equals(other.getConfigFileName());
-      result = result && getSentinelConfigs()
-          .equals(other.getSentinelConfigs());
+      result = result && getSentinelConfigsList()
+          .equals(other.getSentinelConfigsList());
       result = result && getRunShell()
           .equals(other.getRunShell());
       result = result && getMachinePath()
@@ -3444,8 +3460,10 @@ public final class WebRequest_Pb {
       hash = (53 * hash) + getSentinelPort();
       hash = (37 * hash) + CONFIGFILENAME_FIELD_NUMBER;
       hash = (53 * hash) + getConfigFileName().hashCode();
-      hash = (37 * hash) + SENTINELCONFIGS_FIELD_NUMBER;
-      hash = (53 * hash) + getSentinelConfigs().hashCode();
+      if (getSentinelConfigsCount() > 0) {
+        hash = (37 * hash) + SENTINELCONFIGS_FIELD_NUMBER;
+        hash = (53 * hash) + getSentinelConfigsList().hashCode();
+      }
       hash = (37 * hash) + RUNSHELL_FIELD_NUMBER;
       hash = (53 * hash) + getRunShell().hashCode();
       hash = (37 * hash) + MACHINEPATH_FIELD_NUMBER;
@@ -3583,8 +3601,8 @@ public final class WebRequest_Pb {
 
         configFileName_ = "";
 
-        sentinelConfigs_ = "";
-
+        sentinelConfigs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
         runShell_ = "";
 
         machinePath_ = "";
@@ -3611,11 +3629,18 @@ public final class WebRequest_Pb {
 
       public com.gxf.udp.proto.WebRequest_Pb.RunSentinelParamObject buildPartial() {
         com.gxf.udp.proto.WebRequest_Pb.RunSentinelParamObject result = new com.gxf.udp.proto.WebRequest_Pb.RunSentinelParamObject(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         result.sentinelPort_ = sentinelPort_;
         result.configFileName_ = configFileName_;
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          sentinelConfigs_ = sentinelConfigs_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
         result.sentinelConfigs_ = sentinelConfigs_;
         result.runShell_ = runShell_;
         result.machinePath_ = machinePath_;
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -3664,8 +3689,14 @@ public final class WebRequest_Pb {
           configFileName_ = other.configFileName_;
           onChanged();
         }
-        if (!other.getSentinelConfigs().isEmpty()) {
-          sentinelConfigs_ = other.sentinelConfigs_;
+        if (!other.sentinelConfigs_.isEmpty()) {
+          if (sentinelConfigs_.isEmpty()) {
+            sentinelConfigs_ = other.sentinelConfigs_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureSentinelConfigsIsMutable();
+            sentinelConfigs_.addAll(other.sentinelConfigs_);
+          }
           onChanged();
         }
         if (!other.getRunShell().isEmpty()) {
@@ -3701,6 +3732,7 @@ public final class WebRequest_Pb {
         }
         return this;
       }
+      private int bitField0_;
 
       private int sentinelPort_ ;
       /**
@@ -3797,71 +3829,96 @@ public final class WebRequest_Pb {
         return this;
       }
 
-      private java.lang.Object sentinelConfigs_ = "";
-      /**
-       * <code>string sentinelConfigs = 3;</code>
-       */
-      public java.lang.String getSentinelConfigs() {
-        java.lang.Object ref = sentinelConfigs_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          sentinelConfigs_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      private com.google.protobuf.LazyStringList sentinelConfigs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureSentinelConfigsIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          sentinelConfigs_ = new com.google.protobuf.LazyStringArrayList(sentinelConfigs_);
+          bitField0_ |= 0x00000004;
+         }
       }
       /**
-       * <code>string sentinelConfigs = 3;</code>
+       * <code>repeated string sentinelConfigs = 3;</code>
+       */
+      public com.google.protobuf.ProtocolStringList
+          getSentinelConfigsList() {
+        return sentinelConfigs_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string sentinelConfigs = 3;</code>
+       */
+      public int getSentinelConfigsCount() {
+        return sentinelConfigs_.size();
+      }
+      /**
+       * <code>repeated string sentinelConfigs = 3;</code>
+       */
+      public java.lang.String getSentinelConfigs(int index) {
+        return sentinelConfigs_.get(index);
+      }
+      /**
+       * <code>repeated string sentinelConfigs = 3;</code>
        */
       public com.google.protobuf.ByteString
-          getSentinelConfigsBytes() {
-        java.lang.Object ref = sentinelConfigs_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          sentinelConfigs_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
+          getSentinelConfigsBytes(int index) {
+        return sentinelConfigs_.getByteString(index);
       }
       /**
-       * <code>string sentinelConfigs = 3;</code>
+       * <code>repeated string sentinelConfigs = 3;</code>
        */
       public Builder setSentinelConfigs(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureSentinelConfigsIsMutable();
+        sentinelConfigs_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string sentinelConfigs = 3;</code>
+       */
+      public Builder addSentinelConfigs(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  
-        sentinelConfigs_ = value;
+  ensureSentinelConfigsIsMutable();
+        sentinelConfigs_.add(value);
         onChanged();
         return this;
       }
       /**
-       * <code>string sentinelConfigs = 3;</code>
+       * <code>repeated string sentinelConfigs = 3;</code>
+       */
+      public Builder addAllSentinelConfigs(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureSentinelConfigsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, sentinelConfigs_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string sentinelConfigs = 3;</code>
        */
       public Builder clearSentinelConfigs() {
-        
-        sentinelConfigs_ = getDefaultInstance().getSentinelConfigs();
+        sentinelConfigs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
       /**
-       * <code>string sentinelConfigs = 3;</code>
+       * <code>repeated string sentinelConfigs = 3;</code>
        */
-      public Builder setSentinelConfigsBytes(
+      public Builder addSentinelConfigsBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        
-        sentinelConfigs_ = value;
+        ensureSentinelConfigsIsMutable();
+        sentinelConfigs_.add(value);
         onChanged();
         return this;
       }
@@ -5336,7 +5393,7 @@ public final class WebRequest_Pb {
       "Shell\030\006 \001(\t\022\023\n\013machinePath\030\007 \001(\t\"\206\001\n\026Run",
       "SentinelParamObject\022\024\n\014sentinelPort\030\001 \001(" +
       "\005\022\026\n\016configFileName\030\002 \001(\t\022\027\n\017sentinelCon" +
-      "figs\030\003 \001(\t\022\020\n\010runShell\030\004 \001(\t\022\023\n\013machineP" +
+      "figs\030\003 \003(\t\022\020\n\010runShell\030\004 \001(\t\022\023\n\013machineP" +
       "ath\030\005 \001(\t\"%\n\025IsPortUsedParamObject\022\014\n\004po" +
       "rt\030\001 \001(\005\"R\n\033CreateRemoteFileParamObject\022" +
       "\020\n\010fileName\030\001 \001(\t\022\017\n\007content\030\002 \001(\t\022\020\n\010fi" +

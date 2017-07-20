@@ -4,12 +4,10 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.common.util.ConstUtil;
-import com.gxf.communication.AgentCommunication;
 import com.gxf.redis.RedisDeployCenter;
 import com.gxf.redis.redisImpl.RedisDeployCenterImpl;
 import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.util.FileUtil;
-import com.gxf.util.PathUtil;
 import redis.clients.jedis.Jedis;
 
 import java.util.List;
