@@ -2,7 +2,7 @@ package com.gxf.agent.commandExec;
 
 
 import com.gxf.agent.protocol.MachineProtocol;
-import com.gxf.agent.util.IdempotentConfirmer;
+import com.gxf.common.util.IdempotentConfirmer;
 import com.gxf.common.util.ListUtil;
 import com.gxf.common.util.StringUtil;
 import redis.clients.jedis.Jedis;

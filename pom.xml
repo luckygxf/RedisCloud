@@ -15,5 +15,6 @@
         <module>cloud_test</module>
         <module>cloud_udp</module>
         <module>cloud_common</module>
+        <module>cloud_jedis</module>
     </modules>
 </project>

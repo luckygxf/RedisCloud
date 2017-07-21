@@ -1,9 +1,11 @@
 package com.gxf.redis.redisImpl;
 
 import com.gxf.common.util.ConstUtil;
+import com.gxf.common.util.IdempotentConfirmer;
 import com.gxf.communication.AgentCommunication;
-import com.gxf.protocol.MachineProtocol;
+import com.gxf.protocol.Protocol;
 import com.gxf.protocol.RedisProtocol;
+import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
 import com.gxf.util.PasswordUtil;
 import com.gxf.util.RedisConfigUtil;
@@ -11,7 +13,6 @@ import com.gxf.util.SentinelConfigUtil;
 import com.gxf.webJedis.WebJedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.management.Agent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Map;
  */
 public class RedisDeployCenterImpl implements RedisDeployCenter {
     private static Logger logger = LoggerFactory.getLogger(RedisDeployCenterImpl.class);
+    private static RedisCenter redisCenter = new RedisCenterImpl();
 
     @Override
     public boolean deploySentinelInstance(long appId, String masterHost, String[] slaveHosts, int maxMemory, String[] sentinelIps, int appPort, List<WebJedis> jedisList) {
@@ -175,10 +177,40 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
 
     /**
      * 设置主从关系
-     * TODO:待完成
      * */
-    private boolean slaveOf(String masterHost, int masterPort, String slaveHost,
+    private boolean slaveOf(final String masterHost, final int masterPort, String slaveHost,
                             int slavePort, String password){
+        final WebJedis slaveJedis = new WebJedis(slaveHost, slavePort, Protocol.DEFAULT_TIMEOUT * 2);
+        try{
+            slaveJedis.auth(password);
+        } catch (Exception e){
+            logger.error("auth slave node error, slavehost is:{}, slaveport is:{}", slaveHost, slavePort);
+            logger.error(e.getMessage(), e);
+            return false;
+        }
+
+        try{
+            boolean isSlaveSuccess = new IdempotentConfirmer(){
+
+                @Override
+                public boolean execute() {
+                    String result = slaveJedis.slaveof(masterHost, masterPort);
+                    return null != result && result.equalsIgnoreCase("OK");
+                }
+            }.run();
+            if(!isSlaveSuccess){
+                logger.error("slavehost:{}, slaveport:{}, slaveof failed, masterhost:{}, masterport:{}", slaveHost, slavePort, masterHost, masterPort);
+                return false;
+            }
+            redisCenter.configRewreite(slaveHost, slavePort, password);
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+            return false;
+        } finally {
+            if(slaveJedis != null){
+                slaveJedis.close();
+            }
+        }
 
         return true;
     }

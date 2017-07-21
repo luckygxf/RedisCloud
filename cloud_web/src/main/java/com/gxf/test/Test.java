@@ -23,7 +23,7 @@ public class Test {
     private static RedisDeployCenter redisDeployCenter = new RedisDeployCenterImpl();
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
-        deployRedisInstance(ip, port, ConstUtil.CACHE_REDIS_STANDALONE);
+
     }
 
     private static void transfer() throws InvalidProtocolBufferException {

@@ -9,4 +9,8 @@ public class WebJedis extends Jedis {
     public WebJedis(String host, int port){
         super(host, port);
     }
+
+    public WebJedis(String host, int port, int timeOut){
+        super(host, port, timeOut);
+    }
 }
