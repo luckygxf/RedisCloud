@@ -7,6 +7,7 @@ import com.gxf.protocol.Protocol;
 import com.gxf.protocol.RedisProtocol;
 import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
+import com.gxf.test.Test;
 import com.gxf.util.PasswordUtil;
 import com.gxf.util.RedisConfigUtil;
 import com.gxf.util.SentinelConfigUtil;
@@ -124,9 +125,13 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
             return false;
         }
 
-        //TODO:运行sentinel组，即3个sentinel
         //1.4 运行sentinel group
-
+        boolean isSentinelRun = runSentinelGroup(sentinelIps[0], sentinelPorts, masterHost, masterPort, password, jedisList);
+        if(!isSentinelRun){
+            logger.error("runSentinelGroup failed. sentileIp:{}, sentinel ports:{}", sentinelIps[0], sentinelPorts);
+            return false;
+        }
+        logger.info("runSentinelGroup success. sentileIp:{}, sentinel ports:{}", sentinelIps[0], sentinelPorts);
         return true;
     }
 
@@ -137,9 +142,9 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
      * */
     private boolean runSentinelGroup(String sentinelIp,int sentinelPorts[], String masterHost, int masterPort, String password, List<WebJedis> jedisList){
         String masterName = getMasterName(masterHost, masterPort);
-        for(int i = 0; i < sentinelPorts.length; i++){
-            sentinelPorts[i] += RedisProtocol.REDIS_SENTINEL_BASE_PORT + sentinelPorts[i];
-        }
+//        for(int i = 0; i < sentinelPorts.length; i++){
+//            sentinelPorts[i] += RedisProtocol.REDIS_SENTINEL_BASE_PORT + sentinelPorts[i];
+//        }
         String sentinelConfNames[] = new String[sentinelPorts.length];
         for(int i = 0; i < sentinelPorts.length; i++){
             sentinelConfNames[i] = RedisProtocol.getConfigFileName(sentinelPorts[i], ConstUtil.CACHE_REDIS_SENTINEL);

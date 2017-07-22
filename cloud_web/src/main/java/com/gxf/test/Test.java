@@ -4,7 +4,9 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.common.util.ConstUtil;
+import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
+import com.gxf.redis.redisImpl.RedisCenterImpl;
 import com.gxf.redis.redisImpl.RedisDeployCenterImpl;
 import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.util.FileUtil;
@@ -20,7 +22,6 @@ import java.util.List;
  * Created by 58 on 2017/7/11.
  */
 public class Test {
-
     private static Logger logger = LoggerFactory.getLogger(Test.class);
 
     private static String ip = "192.168.211.129";
@@ -30,7 +31,8 @@ public class Test {
     private static RedisDeployCenter redisDeployCenter = new RedisDeployCenterImpl();
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
-        testDeploySentinel();
+//        testDeploySentinel();
+        shutdownInstances("aa9jpfxxy8hnpwab");
     }
 
     private static void testDeploySentinel(){
@@ -41,13 +43,13 @@ public class Test {
         String masterHost = "192.168.211.129";
         int masterPort = 6340;
         String[] slaveHosts = {"192.168.211.129"};
-        int slavvePort = 6341;
+        int slavePort = 6341;
         String[] sentinelIps = {"192.168.211.129"};
         int sentinelPorts[] = {26340, 26341, 26342};
         int type = ConstUtil.CACHE_REDIS_STANDALONE;
         List<WebJedis> webJedisList = new ArrayList<WebJedis>();
 
-        boolean isSuccess = redisDeployCenter.deploySentinelModel(masterHost, slaveHosts, type, sentinelIps, masterPort, slavvePort, sentinelPorts, webJedisList);
+        boolean isSuccess = redisDeployCenter.deploySentinelModel(masterHost, slaveHosts, type, sentinelIps, masterPort, slavePort, sentinelPorts, webJedisList);
         if(!isSuccess){
             logger.error("delpoySentinelModel failed");
         }
@@ -88,4 +90,22 @@ public class Test {
     public static boolean deployRedisInstance(String host, int port, int type){
         return redisDeployCenter.deployRedisInstance(host, port, ConstUtil.CACHE_REDIS_STANDALONE);
     }
+
+    public static void shutdownInstances(String password){
+        String masterHost = "192.168.211.129";
+        int masterPort = 6340;
+        String[] slaveHosts = {"192.168.211.129"};
+        int slavePort = 6341;
+        String[] sentinelIps = {"192.168.211.129"};
+        int sentinelPorts[] = {26340, 26341, 26342};
+
+        RedisCenter redisCenter = new RedisCenterImpl();
+        redisCenter.shutdownRedis(masterHost, masterPort, password);
+        redisCenter.shutdownRedis(slaveHosts[0], slavePort, password);
+        redisCenter.shutdownRedis(sentinelIps[0], sentinelPorts[0], "");
+        redisCenter.shutdownRedis(sentinelIps[0], sentinelPorts[1], "");
+        redisCenter.shutdownRedis(sentinelIps[0], sentinelPorts[2], "");
+
+    }
+
 }

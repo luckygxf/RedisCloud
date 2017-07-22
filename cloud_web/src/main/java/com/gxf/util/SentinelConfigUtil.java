@@ -26,6 +26,7 @@ public class SentinelConfigUtil {
     public static List<String> getSentinelConfigs(String masterHost, int masterPort,  String password, String masterName,String sentinelIp, int sentinelPort){
         List<String> sentinelConfigs = new ArrayList<String>();
         sentinelConfigs.add("daemonize yes");
+        sentinelConfigs.add("protected-mode no");
         sentinelConfigs.add(String.format(sentinelPortConfig, sentinelPort));
         sentinelConfigs.add(String.format(sentinelMonitorConfig, masterName, masterHost, masterPort));
 
