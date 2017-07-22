@@ -8,14 +8,21 @@ import com.gxf.redis.RedisDeployCenter;
 import com.gxf.redis.redisImpl.RedisDeployCenterImpl;
 import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.util.FileUtil;
+import com.gxf.webJedis.WebJedis;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by 58 on 2017/7/11.
  */
 public class Test {
+
+    private static Logger logger = LoggerFactory.getLogger(Test.class);
+
     private static String ip = "192.168.211.129";
 //    private static String ip = "127.0.0.1";
     private static int port = 6041;
@@ -23,7 +30,30 @@ public class Test {
     private static RedisDeployCenter redisDeployCenter = new RedisDeployCenterImpl();
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
+        testDeploySentinel();
+    }
 
+    private static void testDeploySentinel(){
+//        1.1 master 端口号：6340
+//        1.2 slave 端口号:6341
+//        1.3 sentinel 端口号: 26340、26341、26342
+//        1.4 封装原生redis 提供configRewrite方法
+        String masterHost = "192.168.211.129";
+        int masterPort = 6340;
+        String[] slaveHosts = {"192.168.211.129"};
+        int slavvePort = 6341;
+        String[] sentinelIps = {"192.168.211.129"};
+        int sentinelPorts[] = {26340, 26341, 26342};
+        int type = ConstUtil.CACHE_REDIS_STANDALONE;
+        List<WebJedis> webJedisList = new ArrayList<WebJedis>();
+
+        boolean isSuccess = redisDeployCenter.deploySentinelModel(masterHost, slaveHosts, type, sentinelIps, masterPort, slavvePort, sentinelPorts, webJedisList);
+        if(!isSuccess){
+            logger.error("delpoySentinelModel failed");
+        }
+        else {
+            logger.info("deploySentinelModel success");
+        }
     }
 
     private static void transfer() throws InvalidProtocolBufferException {

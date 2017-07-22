@@ -76,6 +76,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         }
         WebJedis webJedis = new WebJedis(masterHost, masterPort);
         try{
+            logger.info("password = {}", password);
             webJedis.auth(password);
         } catch (Exception e){
             logger.error(e.getMessage(), e);
@@ -83,12 +84,17 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         }
         jedisList.add(webJedis);
         logger.info("runInstance, masterHost:{}, masterPort:{} success", masterHost, masterPort);
+
         //1.2 启动slave实例
         String slaveHost = slaveHosts[0];
         redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(slavePort, password);
         runShell = RedisProtocol.getRunShell(slavePort, type);
         machinePath = RedisProtocol.getMachinePath(slavePort, type);
         configFileName = RedisProtocol.getConfigFileName(slavePort, type);
+
+        String masterauth = "masterauth %s";
+        masterauth = String.format(masterauth, password);
+        redisConfigs.add(masterauth);
 
         isPortUsed = AgentCommunication.isPortUsed(slaveHost, slavePort);
         if(isPortUsed){
@@ -110,7 +116,16 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         jedisList.add(webJedis);
         logger.info("runInstance, slaveHost:{}, slavePort:{} success", slaveHost, slavePort);
 
+        //1.3 添加slaveof配置
+        boolean slaveOfSuccess = slaveOf(masterHost, masterPort, slaveHost, slavePort, password);
+        if(!slaveOfSuccess){
+            logger.error("slaveof masterHost:{}, masterPort:{}, slaveHost:{}, slavePort:{}", masterHost, masterPort
+                            , slaveHost, slavePort);
+            return false;
+        }
 
+        //TODO:运行sentinel组，即3个sentinel
+        //1.4 运行sentinel group
 
         return true;
     }

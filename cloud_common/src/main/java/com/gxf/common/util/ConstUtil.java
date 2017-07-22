@@ -15,8 +15,8 @@ public class ConstUtil {
 
     public static final String SPACE = " ";
 
-    public static String SENTINEL_CMD_PREFIX = "/opt/soft/redis403";
-    public static String CLUSTER_CMD_PREFIX = "/opt/soft/redis403";
+    public static String SENTINEL_CMD_PREFIX = "/opt/soft/redis403/";
+    public static String CLUSTER_CMD_PREFIX = "/opt/soft/redis403/";
 
 
 }
