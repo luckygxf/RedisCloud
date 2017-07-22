@@ -1,5 +1,6 @@
 package com.gxf.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +24,36 @@ public class RedisConfigUtil {
         String portConfig = "port " + port;
         configs.add(portConfig);
         return configs;
+    }
+
+    /**
+     *
+         port 7000
+         cluster-enabled yes
+         cluster-config-file nodes.conf
+         cluster-node-timeout 5000
+         appendonly yes
+     * */
+    public static List<String> getMinRedisClusterInstanceConfig(int port, String confFileName){
+        List<String> clusterIntanceConfigs = new ArrayList<String>();
+        String listenPort = "port %d";
+        listenPort = String.format(listenPort, port);
+        clusterIntanceConfigs.add(listenPort);
+
+        String enableCluster = "cluster-enabled yes";
+        clusterIntanceConfigs.add(enableCluster);
+
+        String confFileNameConf = "cluster-config-file %s";
+        confFileNameConf = String.format(confFileNameConf, confFileName);
+        clusterIntanceConfigs.add(confFileNameConf);
+
+        String timeOut = "cluster-node-timeout 5000";
+        clusterIntanceConfigs.add(timeOut);
+
+        String appendOnly = "appendonly yes";
+        clusterIntanceConfigs.add(appendOnly);
+
+        return clusterIntanceConfigs;
     }
 
 }

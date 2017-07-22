@@ -1,5 +1,6 @@
 package com.gxf.redis;
 
+import com.gxf.redis.util.RedisClusterNode;
 import com.gxf.webJedis.WebJedis;
 
 import java.util.List;
@@ -25,4 +26,13 @@ public interface RedisDeployCenter {
      * */
     boolean deploySentinelModel(String masterHost, String[] slaveHosts, int type, String[] sentinelIps, int masterPort, int slavePort, int sentinelPorts[], List<WebJedis> jedisList);
 
+    /**
+     * 针对虚拟机部署集群
+     * */
+    boolean deployCluster(String masterHost, String slavePort, int masterPorts[], int slavePorts[]);
+
+    /**
+     * 部署redis集群
+     * */
+    boolean deployClusterInstance(List<RedisClusterNode> nodes);
 }
