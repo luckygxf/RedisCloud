@@ -142,19 +142,23 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
      * */
     @Override
     public boolean deployCluster(String masterHost, String slaveHost, int[] masterPorts, int[] slavePorts) {
+        List<WebJedis> clusterJedis = new ArrayList<WebJedis>();
+
         List<RedisClusterNode> clusterNodes = new ArrayList<RedisClusterNode>();
         //这里共有3个node
         //数组内容顺序master slave master slave master slave
         for(int i = 0; i < masterPorts.length; i++){
             RedisClusterNode node = new RedisClusterNode(masterHost, masterPorts[i], slaveHost, slavePorts[i]);
             clusterNodes.add(node);
+            clusterJedis.add(new WebJedis(masterHost, masterPorts[i]));
+            clusterJedis.add(new WebJedis(slaveHost, slavePorts[i]));
         }
         //开始部署集群
         boolean result = deployClusterInstance(clusterNodes);
 
         if(!result){
             logger.error("deploy cluster instance failed rollback");
-            //TODO:这里需要回滚
+            clusterDeployFaileRollback(clusterJedis);
         }
         return result;
     }
@@ -501,6 +505,32 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         }
 
         return "";
+    }
+
+    /**
+     * 部署失败，关闭以前启动的redis实例
+     * */
+    private void clusterDeployFaileRollback(List<WebJedis> clusterJedis){
+        for(WebJedis jedis : clusterJedis){
+            try{
+                jedis.shutdown();
+                logger.info("shut down redis host:{}, port:{} success", jedis.getClient().getHost(), jedis.getClient().getPort());
+                logger.info("deploy failed, roll back shutdown redis");
+            } catch (Exception e){
+                logger.info("shut down redis host:{}, port:{} failed", jedis.getClient().getHost(), jedis.getClient().getPort());
+                logger.error(e.getMessage(), e);
+            } finally {
+                if(jedis != null){
+                    try{
+                        jedis.close();
+                    } catch (Exception e){
+                        logger.error(e.getMessage(), e);
+                    }
+                } //if
+            } //finally
+        } //for
+
+        logger.info("deplay failed, roll back all redis instance");
     }
 
 }

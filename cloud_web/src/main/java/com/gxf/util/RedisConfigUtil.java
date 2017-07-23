@@ -1,6 +1,9 @@
 package com.gxf.util;
 
 
+import com.gxf.common.util.ConstUtil;
+import com.gxf.protocol.RedisProtocol;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +52,8 @@ public class RedisConfigUtil {
         String enableCluster = "cluster-enabled yes";
         clusterIntanceConfigs.add(enableCluster);
 
-        String confFileNameConf = "cluster-config-file node-%d.conf";
+        String machinePath = RedisProtocol.getMachinePath(port, ConstUtil.CACHE_TYPE_REDIS_CLUSTER);
+        String confFileNameConf = "cluster-config-file " + machinePath + "node-%d.conf";
         confFileNameConf = String.format(confFileNameConf, port);
         clusterIntanceConfigs.add(confFileNameConf);
 

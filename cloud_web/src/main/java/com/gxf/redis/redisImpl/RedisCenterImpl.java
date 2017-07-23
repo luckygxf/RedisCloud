@@ -108,6 +108,7 @@ public class RedisCenterImpl implements RedisCenter {
         WebJedis jedis = new WebJedis(host, port);
         try{
             String clusterNodes = jedis.clusterNodes();
+            logger.debug("clusterNodes = {}", clusterNodes);
             if(StringUtil.isEmpty(clusterNodes)){
                 logger.error("host:{}, port:{} clusterNodes is empty", host, port);
                 return false;
