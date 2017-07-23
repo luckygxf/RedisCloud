@@ -35,4 +35,14 @@ public interface RedisDeployCenter {
      * 部署redis集群
      * */
     boolean deployClusterInstance(List<RedisClusterNode> nodes);
+
+    /**
+     * 下线指定的实例
+     * */
+    boolean shutdown(String ip, int port, String password);
+
+    /**
+     * 判断指定的实例是否运行
+     * */
+    boolean isRun(String ip, int port, String password);
 }

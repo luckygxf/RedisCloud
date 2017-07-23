@@ -4,6 +4,8 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.common.util.ConstUtil;
+import com.gxf.machine.MachineCenter;
+import com.gxf.machine.impl.MachineCenterImpl;
 import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
 import com.gxf.redis.redisImpl.RedisCenterImpl;
@@ -24,14 +26,19 @@ import java.util.List;
 public class Test {
     private static Logger logger = LoggerFactory.getLogger(Test.class);
 
-    private static String ip = "192.168.211.129";
+    private static String ip = "192.168.211.131";
 //    private static String ip = "127.0.0.1";
-    private static int port = 6041;
+    private static int port = 6042;
     //TODO:这里可以考虑用spring注入
     private static RedisDeployCenter redisDeployCenter = new RedisDeployCenterImpl();
+    private static MachineCenter machineCenter = new MachineCenterImpl();
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
-        testDeployCluster();
+//        shutdownInstance("192.168.211.131", 6042, "pd25aggrzjhtctch");
+//        deployRedisInstance(ip, port, ConstUtil.CACHE_REDIS_STANDALONE);
+//        testDeployCluster();
+        String password = "pd25aggrzjhtctch";
+        startRedisInstanceAtPort(ip, port, ConstUtil.CACHE_REDIS_STANDALONE, password);
     }
 
     private static void testDeployCluster(){
@@ -122,4 +129,11 @@ public class Test {
 
     }
 
+    public static void shutdownInstance(String ip, int port, String password){
+        redisDeployCenter.shutdown(ip, port, password);
+    }
+
+    public static void startRedisInstanceAtPort(String ip, int port, int type, String password){
+        machineCenter.startProcessAtPort(ip, port, type, password);
+    }
 }

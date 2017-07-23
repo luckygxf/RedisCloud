@@ -109,5 +109,31 @@ public class AgentCommunication {
         return false;
     }
 
+    /**
+     * 在指定端口启动redis实例
+     * */
+    public static boolean startProcessAtPort(String ip, int port, int type, String password, String runShell){
+        boolean result = false;
+        UDPClientObject_Pb.UDPClientObject.Builder udpClientObjectBuilder = UDPClientObject_Pb.UDPClientObject.newBuilder();
+        WebRequest_Pb.StartRedisInstanceAtPortParamObject.Builder startRedisInstanceAtPortParamObjectBuilder = WebRequest_Pb.StartRedisInstanceAtPortParamObject.newBuilder();
+        udpClientObjectBuilder.setCommand(UDPClientObject_Pb.RequestCommand.CMD_startRedisInstanceAtPort);
+        startRedisInstanceAtPortParamObjectBuilder.setPort(port);
+        startRedisInstanceAtPortParamObjectBuilder.setRunShell(runShell);
+        startRedisInstanceAtPortParamObjectBuilder.setType(type);
+        startRedisInstanceAtPortParamObjectBuilder.setPassword(password);
+        udpClientObjectBuilder.setParams(startRedisInstanceAtPortParamObjectBuilder.build().toByteString());
+        try{
+            ResultData resultData = UDPClientSocket.sendMessage(ip, ConstUtil.AGENT_UDP_PORT, udpClientObjectBuilder);
+            if (resultData.getResultCode() == UDPResponseCode.SUCCESS){
+                result = true;
+                logger.info("startProcessAtPort host:{}, port:{} success", ip, port);
+            }else{
+                logger.error("startProcessAtPort host:{}, port:{} failed", ip, port);
+            }
+        }catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
 
+        return result;
+    }
 }

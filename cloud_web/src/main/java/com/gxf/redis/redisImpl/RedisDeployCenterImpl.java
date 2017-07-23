@@ -13,13 +13,17 @@ import com.gxf.test.Test;
 import com.gxf.util.PasswordUtil;
 import com.gxf.util.RedisConfigUtil;
 import com.gxf.util.SentinelConfigUtil;
+import com.gxf.util.StringUtil;
 import com.gxf.webJedis.WebJedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.exceptions.JedisDataException;
 import sun.management.AgentConfigurationError;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.jar.JarException;
 
 /**
  * Created by 58 on 2017/7/17.
@@ -42,7 +46,8 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         String shellTemplate = "redis-server %s &";
         String machinePath = RedisProtocol.getMachinePath(port, type);
         String configName = RedisProtocol.getConfigFileName(port, type);
-        String runShell = String.format(shellTemplate, machinePath + configName);
+//        String runShell = String.format(shellTemplate, machinePath + configName);
+        String runShell = RedisProtocol.getRunShell(port, type);
         String password = PasswordUtil.genRandomNum(16);
         List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(port, password);
 
@@ -531,6 +536,89 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         } //for
 
         logger.info("deplay failed, roll back all redis instance");
+    }
+
+    /**
+     * 下线指定redis实例
+     * */
+    public boolean shutdown(String ip, int port, String password){
+        boolean isRun = isRun(ip, port, password);
+        if(!isRun){
+            return true;
+        }
+        final WebJedis jedis = new WebJedis(ip, port);
+        if(StringUtil.isNotEmpty(password)){
+            jedis.auth(password);
+        }
+        try{
+            //关闭实例节点
+            boolean isShutdown = new IdempotentConfirmer(){
+                @Override
+                public boolean execute(){
+                    jedis.shutdown();
+                    return true;
+                }
+            }.run();
+            if(!isShutdown){
+                logger.error("host:{}, port:{} redis is not shutdown!", ip, port);
+            }
+            logger.info("host:{}, port:{} redis is shutdown!", ip, port);
+            return isShutdown;
+        }catch (Exception e){
+            logger.error(e.getMessage(), e);
+            return false;
+        } finally {
+            if(null != jedis){
+                try{
+                    jedis.close();
+                } catch (Exception e){
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        } //finally
+    }
+
+    /**
+     * 判断是否有实例在端口运行
+     * */
+    public boolean isRun(final String ip, final int port, final String password){
+        boolean isRun = new IdempotentConfirmer(){
+            private int timeOutFactor = 1;
+
+            @Override
+            public boolean execute(){
+                WebJedis jedis = new WebJedis(ip, port);
+                try{
+                    if(!StringUtil.isEmpty(password)){
+                        jedis.auth(password);
+                    } //if
+                    jedis.getClient().setConnectionTimeout(Protocol.DEFAULT_TIMEOUT * timeOutFactor);
+                    jedis.getClient().setSoTimeout(Protocol.DEFAULT_TIMEOUT * timeOutFactor);
+                    String pong = jedis.ping();
+                    return pong != null && pong.equalsIgnoreCase("PONG");
+                } catch (JedisDataException e){
+                    String message = e.getMessage();
+                    logger.warn(e.getMessage());
+                    if(!StringUtil.isEmpty(message) && message.startsWith("LOADING")){
+                        return true;
+                    }
+                    return false;
+                } catch (Exception e){
+                    logger.error(e.getMessage(), e);
+                    return false;
+                }finally {
+                    if(jedis != null){
+                        try{
+                            jedis.close();
+                        } catch (Exception e){
+                            logger.error(e.getMessage(), e);
+                        }
+                    }
+                } //finally
+            } //execute
+        }.run();
+
+        return isRun;
     }
 
 }

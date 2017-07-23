@@ -1,3 +1,10 @@
+1. redis手动主从切换
+------------------------------------------------
+1. 下线实例和启动实例
+    1.1 启动实例host,port master | slave | sentinel(都是执行redis-server + machinepath + config)
+    1.2 下线实例host,port master | slave | sentinel(jedis客户端执行关闭操作)
+    1.3 开发agent在指定端口启动redis实例,已经存在的reids实例，配置文件存在
+------------------------------------------------
 1. 通过web管理平台部署集群3主3从
     1.1 master 端口号：6440， 6441， 6442
     1.2 slave 端口号：6443， 6444， 6445

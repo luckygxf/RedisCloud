@@ -24,6 +24,10 @@ public final class UDPClientObject_Pb {
   public enum RequestCommand
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
+     * <pre>
+     *web command
+     * </pre>
+     *
      * <code>CMD_executeShell = 0;</code>
      */
     CMD_executeShell(0),
@@ -48,13 +52,21 @@ public final class UDPClientObject_Pb {
      */
     CMD_createRemoteFile(5),
     /**
-     * <code>CMD_reportData = 6;</code>
+     * <code>CMD_startRedisInstanceAtPort = 6;</code>
      */
-    CMD_reportData(6),
+    CMD_startRedisInstanceAtPort(6),
+    /**
+     * <code>CMD_reportData = 7;</code>
+     */
+    CMD_reportData(7),
     UNRECOGNIZED(-1),
     ;
 
     /**
+     * <pre>
+     *web command
+     * </pre>
+     *
      * <code>CMD_executeShell = 0;</code>
      */
     public static final int CMD_executeShell_VALUE = 0;
@@ -79,9 +91,13 @@ public final class UDPClientObject_Pb {
      */
     public static final int CMD_createRemoteFile_VALUE = 5;
     /**
-     * <code>CMD_reportData = 6;</code>
+     * <code>CMD_startRedisInstanceAtPort = 6;</code>
      */
-    public static final int CMD_reportData_VALUE = 6;
+    public static final int CMD_startRedisInstanceAtPort_VALUE = 6;
+    /**
+     * <code>CMD_reportData = 7;</code>
+     */
+    public static final int CMD_reportData_VALUE = 7;
 
 
     public final int getNumber() {
@@ -108,7 +124,8 @@ public final class UDPClientObject_Pb {
         case 3: return CMD_runRedisCommand;
         case 4: return CMD_isPortUsed;
         case 5: return CMD_createRemoteFile;
-        case 6: return CMD_reportData;
+        case 6: return CMD_startRedisInstanceAtPort;
+        case 7: return CMD_reportData;
         default: return null;
       }
     }
@@ -776,12 +793,13 @@ public final class UDPClientObject_Pb {
       "\n\025UDPClientObject.proto\022\021com.gxf.udp.pro" +
       "to\"h\n\017UDPClientObject\022\021\n\tsessionID\030\001 \001(\005" +
       "\0222\n\007command\030\002 \001(\0162!.com.gxf.udp.proto.Re" +
-      "questCommand\022\016\n\006params\030\003 \001(\014*\253\001\n\016Request" +
+      "questCommand\022\016\n\006params\030\003 \001(\014*\315\001\n\016Request" +
       "Command\022\024\n\020CMD_executeShell\020\000\022\023\n\017CMD_run" +
       "Instance\020\001\022\023\n\017CMD_runSentinel\020\002\022\027\n\023CMD_r" +
       "unRedisCommand\020\003\022\022\n\016CMD_isPortUsed\020\004\022\030\n\024" +
-      "CMD_createRemoteFile\020\005\022\022\n\016CMD_reportData" +
-      "\020\006B\024B\022UDPClientObject_Pbb\006proto3"
+      "CMD_createRemoteFile\020\005\022 \n\034CMD_startRedis" +
+      "InstanceAtPort\020\006\022\022\n\016CMD_reportData\020\007B\024B\022" +
+      "UDPClientObject_Pbb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

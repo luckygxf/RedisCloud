@@ -133,8 +133,37 @@ public class Main {
                     resultCode = UDPResponseCode.FAIL;
                     serverResponse(udpServerSocket, udpClientObject, result, resultCode);
                 }
+            }else if(udpClientObject.getCommand().equals(UDPClientObject_Pb.RequestCommand.CMD_startRedisInstanceAtPort)){
+                logger.info("execute CMD_startRedisInstanceAtPort start...");
+                int port = 0;
+                int type = 0;
+                String password = "";
+                String runShell = "";
+                byte []result = {1};//success
+                try{
+                    WebRequest_Pb.StartRedisInstanceAtPortParamObject startRedisInstanceAtPortParamObject = WebRequest_Pb.StartRedisInstanceAtPortParamObject.parseFrom(udpClientObject.getParams());
+                    port = startRedisInstanceAtPortParamObject.getPort();
+                    runShell = startRedisInstanceAtPortParamObject.getRunShell();
+                    type = startRedisInstanceAtPortParamObject.getType();
+                    password = startRedisInstanceAtPortParamObject.getPassword();
+                    boolean isSucccess = RedisInstanceDeployController.startRedisInstanceAtPort(port, runShell, password, type);
+                    if(isSucccess){
+                        logger.info("CMD_startRedisInstanceAtPort success, port:{}, runShell:{}", port, runShell);
+                    }else{
+                        logger.error("CMD_startRedisInstanceAtPort failed, port:{}, runShell:{}", port, runShell);
+                        result[0] = 2;
+                        resultCode = UDPResponseCode.FAIL;
+                    } //else
+                    serverResponse(udpServerSocket, udpClientObject, result, resultCode);
+                } catch (Exception e){
+                    logger.error("CMD_startRedisInstanceAtPort failed, port:{}, runShell:{}", port, runShell);
+                    logger.error(e.getMessage(), e);
+                    result[0] = 2;
+                    resultCode = UDPResponseCode.FAIL;
+                    serverResponse(udpServerSocket, udpClientObject, result, resultCode);
+                } //catch
             }
-        }
+        } //while
     } //main
 
     private static void serverResponse(UdpServerSocket udpServerSocket, UDPClientObject_Pb.UDPClientObject udpClientObject, byte[] data, int resultCode) throws IOException {
@@ -147,3 +176,4 @@ public class Main {
         udpServerSocket.response(builder.build().toByteArray());
     }
 }
+

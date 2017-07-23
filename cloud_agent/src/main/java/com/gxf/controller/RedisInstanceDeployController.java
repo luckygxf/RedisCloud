@@ -71,4 +71,12 @@ public class RedisInstanceDeployController {
             System.out.println(line);
         }
     }
+
+    /**
+     * 在指定端口启动redis实例
+     *配置文件已经创建
+     * */
+    public static boolean startRedisInstanceAtPort(int port, String runShell, String password, int type){
+        return MachineCenter.startRedisAtPort(port, password, type, runShell);
+    }
 }

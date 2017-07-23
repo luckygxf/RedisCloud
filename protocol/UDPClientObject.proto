@@ -12,12 +12,14 @@ message UDPClientObject{
 
 //客户端发出的请求类型
 enum RequestCommand{
+    //web command
     CMD_executeShell = 0;
     CMD_runInstance = 1;
     CMD_runSentinel = 2;
     CMD_runRedisCommand = 3;
     CMD_isPortUsed = 4;
     CMD_createRemoteFile = 5;
+    CMD_startRedisInstanceAtPort = 6;
 
-    CMD_reportData = 6;
+    CMD_reportData = 7;
 }
