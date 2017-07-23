@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import sun.management.AgentConfigurationError;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by 58 on 2017/7/17.
@@ -137,19 +138,30 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
     }
 
     /**
-     * TODO:待完成
+     * 部署集群
      * */
     @Override
     public boolean deployCluster(String masterHost, String slaveHost, int[] masterPorts, int[] slavePorts) {
         List<RedisClusterNode> clusterNodes = new ArrayList<RedisClusterNode>();
+        //这里共有3个node
+        //数组内容顺序master slave master slave master slave
         for(int i = 0; i < masterPorts.length; i++){
             RedisClusterNode node = new RedisClusterNode(masterHost, masterPorts[i], slaveHost, slavePorts[i]);
             clusterNodes.add(node);
         }
+        //开始部署集群
+        boolean result = deployClusterInstance(clusterNodes);
 
-        return true;
+        if(!result){
+            logger.error("deploy cluster instance failed rollback");
+            //TODO:这里需要回滚
+        }
+        return result;
     }
 
+    /**
+     * 根据节点部署集群
+     * */
     @Override
     public boolean deployClusterInstance(List<RedisClusterNode> nodes) {
         String confFileNames[] = new String[nodes.size() * 2];
@@ -214,22 +226,139 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         } //for
 
         //start cluster
-        boolean isClusterSuccess = false;
-
-
-        return isClusterSuccess;
+        boolean isClusterSuccess = startCluster(clusterMap);
+        if(!isClusterSuccess){
+            logger.error("start cluster failed.");
+            return false;
+        }
+        return true;
     }
 
     /**
-     * TODO:待完成
      * 将启动的实例配置成集群
      * */
     private boolean startCluster(Map<WebJedis, WebJedis> clusterMap){
+        final WebJedis jedis = new ArrayList<WebJedis>(clusterMap.keySet()).get(0);
+        int port = jedis.getClient().getPort();
+        //meet集群节点
+        for(final WebJedis master : clusterMap.keySet()){
+            boolean isMeet = new IdempotentConfirmer(){
 
+                @Override
+                public boolean execute() {
+                    boolean isMeetSuccess = clusterMeet(jedis, master.getClient().getHost(), master.getClient().getPort());
+                    return isMeetSuccess;
+                } //execute
+            }.run();
 
+            if(!isMeet){
+                logger.info("master host:{}, port:{} meet failed", master.getClient().getHost(), master.getClient().getPort());
+                return false;
+            }
+            //meet slave
+            final WebJedis slaveJedis = clusterMap.get(master);
+            if (null != slaveJedis){
+                isMeet = new IdempotentConfirmer(){
 
+                    @Override
+                    public boolean execute() {
+                        boolean isMeetSuccess = clusterMeet(jedis, slaveJedis.getClient().getHost(), slaveJedis.getClient().getPort());
+                        return isMeetSuccess;
+                    } //execute
+                }.run();
+                if(!isMeet){
+                    logger.error("slave host:{}, port:{} meet failed.", slaveJedis.getClient().getHost(), slaveJedis.getClient().getPort());
+                    return false;
+                }
+            } //if
 
+        } //for
 
+        logger.info("cluster meet success!");
+
+        //assign slots
+        int masterSize = clusterMap.size();
+        int perSize = (int) Math.ceil(16834 / masterSize);
+        int index = 0;
+        int masterIndex = 0;
+        ArrayList<Integer> slots = new ArrayList<Integer>();
+        List<WebJedis> masters = new ArrayList<WebJedis>(clusterMap.keySet());
+
+        //start to assign slots
+        for(int slot = 0; slot <= 16383; slot++){
+            slots.add(slot);
+            if(index ++ >= perSize || slot == 16383){
+                final int[] slotArray = new int[slots.size()];
+                for(int i = 0; i < slotArray.length; i++){
+                    slotArray[i] = slots.get(i);
+                } //for
+                final WebJedis masterJedis = masters.get(masterIndex ++);
+                boolean isSlot = new IdempotentConfirmer(){
+
+                    @Override
+                    public boolean execute() {
+                        String response = masterJedis.clusterAddSlots(slotArray);
+                        boolean isSlotSuccess = response != null && response.equalsIgnoreCase("OK");
+                        if(!isSlotSuccess){
+                            logger.error("allocate slots failed.");
+                            return false;
+                        }
+
+                        return true;
+                    } //execute
+                }.run();
+                if(!isSlot){
+                    logger.error("{}:{} set slots:{} failed.", masterJedis.getClient().getHost(), masterJedis.getClient().getPort(), slotArray);
+                    return false;
+                }
+                slots.clear();
+                index = 0;
+            } //if
+        } //for
+        logger.info("cluster allocate 16384 slot success!");
+
+        //设置从节点
+        for(WebJedis masterJedis : clusterMap.keySet()){
+            final WebJedis slaveJedis = clusterMap.get(masterJedis);
+            if(slaveJedis == null){
+                continue;
+            } //if
+            final String nodeId = getClusterNodeId(masterJedis);
+            boolean isReplicate = new IdempotentConfirmer(){
+
+                @Override
+                public boolean execute() {
+                    try{
+                        //等待广播节点
+                        TimeUnit.SECONDS.sleep(2);
+                    }catch (Exception e){
+                        logger.error(e.getMessage(), e);
+                    }
+                    String response = "";
+                    try{
+                        response = slaveJedis.clusterReplicate(nodeId);
+                    } catch (Exception e){
+                        logger.error(e.getMessage(), e);
+                    }
+                    boolean isReplicateSucces = response != null && response.equalsIgnoreCase("OK");
+                    if(!isReplicateSucces){
+                        try{
+                            TimeUnit.SECONDS.sleep(2);
+                        }catch (Exception e){
+                            logger.error(e.getMessage(), e);
+                        }
+
+                        return false;
+                    }
+                    return true;
+                } //execute
+            }.run();
+            if(!isReplicate){
+                logger.error("{}:{} set replicate:failed", slaveJedis.getClient().getHost(), slaveJedis.getClient().getPort());
+                return false;
+            }
+        } //for
+        logger.info("cluster set master slave replicate success");
         return true;
     }
 
@@ -332,4 +461,46 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
 
         return true;
     }
+
+    /**
+     * meet集群中的节点
+     * */
+    private boolean clusterMeet(WebJedis webJedis, String host, int port){
+        boolean isSingleNode = redisCenter.isSingleClusterNode(host, port);
+        if(!isSingleNode){
+            logger.error("{}:{} is not single node",host, port);
+            return false;
+        }
+        logger.error("{}:{} is single node", host, port);
+
+        String response = webJedis.clusterMeet(host, port);
+        boolean isMeet = response != null && response.equalsIgnoreCase("OK");
+        if(!isMeet){
+            logger.error("{}:{} meet error", host, port);
+            return false;
+        }
+
+        logger.info("{}:{} meet success", host, port);
+
+        return true;
+    }
+
+    /**
+     * 获取集群节点nodeId
+     * */
+    private String getClusterNodeId(WebJedis jedis){
+        try{
+            String infoOutput = jedis.clusterNodes();
+            for(String infoLine : infoOutput.split("\n")){
+                if(infoLine.contains("myself")){
+                    return infoLine.split(" ")[0];
+                } //if
+            } //for
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
+
+        return "";
+    }
+
 }

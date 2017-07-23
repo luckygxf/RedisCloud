@@ -22,4 +22,9 @@ public interface RedisCenter {
      * master | slave | sentinel
      * */
     boolean isInstanceRun(String host, int port, String password);
+
+    /**
+     * 判断是否为孤立节点
+     * */
+    boolean isSingleClusterNode(String host, int port);
 }

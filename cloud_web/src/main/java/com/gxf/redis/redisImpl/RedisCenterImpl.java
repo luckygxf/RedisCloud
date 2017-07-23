@@ -102,4 +102,24 @@ public class RedisCenterImpl implements RedisCenter {
 
         return isRun;
     }
+
+    @Override
+    public boolean isSingleClusterNode(String host, int port) {
+        WebJedis jedis = new WebJedis(host, port);
+        try{
+            String clusterNodes = jedis.clusterNodes();
+            if(StringUtil.isEmpty(clusterNodes)){
+                logger.error("host:{}, port:{} clusterNodes is empty", host, port);
+                return false;
+            }
+            String[] nodeInfos = clusterNodes.split("\n");
+
+            return nodeInfos.length == 1 ? true : false;
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+            return false;
+        } finally {
+            jedis.close();
+        }
+    }
 }
