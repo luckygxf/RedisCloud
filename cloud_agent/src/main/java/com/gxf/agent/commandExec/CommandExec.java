@@ -5,6 +5,8 @@ import com.gxf.agent.protocol.MachineProtocol;
 import com.gxf.common.util.IdempotentConfirmer;
 import com.gxf.common.util.ListUtil;
 import com.gxf.common.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 
 import java.io.*;
@@ -20,6 +22,7 @@ import java.util.concurrent.*;
  */
 public class CommandExec {
     private static ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private static Logger logger = LoggerFactory.getLogger(CommandExec.class);
 
 
     /**
@@ -47,7 +50,7 @@ public class CommandExec {
                 bufferedWriter.close();
             }
         } catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return false;
         }
 
@@ -66,12 +69,17 @@ public class CommandExec {
             String psResponse = execute(psCmd);
             if(!StringUtil.isEmpty(psCmd)){
                 String lines[] = psResponse.split(System.lineSeparator());
-                for(String line : lines){
-                    if(line.contains(String.valueOf(port))){
-                        isUsed = true;
-                        break;
-                    } //if
-                } //for
+//                for(String line : lines){
+//                    if(line.contains(String.valueOf(port))){
+//                        isUsed = true;
+//                        break;
+//                    } //if
+//                } //for
+                logger.info("lines = {}", lines);
+                if(lines != null && lines.length >= 2){
+                    return true;
+                }
+                return false;
             } //if
         } catch (Exception e){
             e.printStackTrace();
@@ -188,14 +196,20 @@ public class CommandExec {
         final Jedis jedis = new Jedis("127.0.0.1", port);
 
         try{
-            jedis.auth(password);
+            if(!StringUtil.isEmpty(password)){
+                jedis.auth(password);
+            }
             return new IdempotentConfirmer(){
                 @Override
                 public boolean execute(){
                     String pong = jedis.ping();
+                    logger.info("pong = {}", pong);
                     return null != pong && pong.equals("PONG");
                 }
             }.run();
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+            return  false;
         } finally {
             jedis.close();
             return false;

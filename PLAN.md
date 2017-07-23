@@ -3,6 +3,9 @@
     1.2 slave 端口号：6443， 6444， 6445
     1.3 开发web模块
         1.3.1 部署好的实例，配置为集群模式
+    1.4 部署机器：3主3从
+        1.4.1 路径：/work/clusterNode%port
+        1.4.2 配置文件：/work/clusterNode%port/cnd%port.conf
 ------------------------------------------------
 1. 通过web管理平台启动master、slave、3个sentinel
     1.1 master 端口号：6340

@@ -31,8 +31,22 @@ public class Test {
     private static RedisDeployCenter redisDeployCenter = new RedisDeployCenterImpl();
 
     public static void main(String[] args) throws InvalidProtocolBufferException {
-//        testDeploySentinel();
-        shutdownInstances("aa9jpfxxy8hnpwab");
+        testDeployCluster();
+    }
+
+    private static void testDeployCluster(){
+        String masterHost = "192.168.211.131";
+        String slaveHost = "192.168.211.131";
+        int masterPorts[] = {6440, 6441, 6442};
+        int slavePorts[] = {6543, 6544, 6545};
+
+        boolean result = redisDeployCenter.deployCluster(masterHost, slaveHost, masterPorts, slavePorts);
+        if(result){
+            logger.info("deploy cluster sucess");
+        }
+        else{
+            logger.error("deploy cluster failed.");
+        }
     }
 
     private static void testDeploySentinel(){

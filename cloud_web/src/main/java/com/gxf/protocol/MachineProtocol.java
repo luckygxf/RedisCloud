@@ -5,7 +5,7 @@ package com.gxf.protocol;
  */
 public class MachineProtocol {
 
-    public static String CLUSTER_DIR = "/work/redisCluster%d/rcnode%d/";
+    public static String CLUSTER_DIR = "/work/redisCluster%d/";
     public static String SENTINEL_DIR = "/work/sentinel%d/";
     public static String SENTINEL_REDIS_DIR = "/work/redis%d/";
 

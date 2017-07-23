@@ -191,7 +191,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
             runShell = RedisProtocol.getRunShell(nodes.get(i).getSlavePort(), ConstUtil.CACHE_TYPE_REDIS_CLUSTER);
             runShells[i + 1] = runShell;
             machinePath = RedisProtocol.getMachinePath(nodes.get(i).getSlavePort(), ConstUtil.CACHE_TYPE_REDIS_CLUSTER);
-            machinePaths[i] = machinePath;
+            machinePaths[i + 1] = machinePath;
 
             //start master instance
             boolean isPortUsed = AgentCommunication.isPortUsed(nodes.get(i).getMasterHost(), nodes.get(i).getMasterPort());
