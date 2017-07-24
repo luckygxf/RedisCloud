@@ -621,4 +621,43 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         return isRun;
     }
 
+    /**
+     * 手动进行failover进行主从切换
+     * */
+    public boolean sentinelFailover(final String ip, final int port, final String masterName){
+        boolean isSentinelRun = redisCenter.isInstanceRun(ip, port, "");
+        if(!isSentinelRun){
+            logger.error("ip:{}, port:{} is not run", ip, port);
+            return false;
+        }
+        boolean isSentinelFailOver = new IdempotentConfirmer(){
+            @Override
+            public boolean execute() {
+                WebJedis jedis = new WebJedis(ip, port, Protocol.DEFAULT_TIMEOUT);
+                try{
+                    String response = jedis.sentinelFailover(masterName);
+                    return response != null && response.equalsIgnoreCase("OK");
+                } catch (Exception e){
+                    logger.error(e.getMessage(), e);
+                    return false;
+                } finally {
+                    if(jedis != null){
+                        try{
+                            jedis.close();
+                        } catch (Exception e){
+                            logger.error(e.getMessage(), e);
+                        } //catch
+                    } //if
+                } //finally
+            } //execute
+        }.run();
+        if(!isSentinelFailOver){
+            logger.error("ip:{}, port:{} sentinel failover error", ip, port);
+            return false;
+        }else{
+            logger.warn("ip:{}, port:{} sentinel failover success");
+            return true;
+        }
+    }
+
 }

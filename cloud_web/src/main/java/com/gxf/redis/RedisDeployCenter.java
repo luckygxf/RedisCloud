@@ -45,4 +45,9 @@ public interface RedisDeployCenter {
      * 判断指定的实例是否运行
      * */
     boolean isRun(String ip, int port, String password);
+
+    /**
+     * 手动进行failover进行主从切换
+     * */
+    boolean sentinelFailover(String ip, int port, String masterName);
 }

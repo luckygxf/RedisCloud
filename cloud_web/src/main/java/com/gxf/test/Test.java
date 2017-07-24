@@ -39,7 +39,8 @@ public class Test {
 //        testDeployCluster();
 //        String password = "pd25aggrzjhtctch";
 //        startRedisInstanceAtPort(ip, port, ConstUtil.CACHE_REDIS_STANDALONE, password);
-        testDeploySentinel();
+//        testDeploySentinel();
+        testSentinelFailover();
     }
 
     private static void testDeployCluster(){
@@ -106,6 +107,15 @@ public class Test {
         List<String> lines = FileUtil.getFileContent(filePath);
         for(String line : lines){
             System.out.println(line);
+        }
+    }
+
+    public static void testSentinelFailover(){
+        String host = "192.168.211.131";
+        for(int i = 0; i < 3; i++){
+            int port = 26340 + i;
+            String masterName = "sentinel-192.168.211.131-6340";
+            redisDeployCenter.sentinelFailover(host, port, masterName);
         }
     }
 

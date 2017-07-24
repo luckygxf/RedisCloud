@@ -29,6 +29,10 @@ public class SentinelConfigUtil {
         sentinelConfigs.add("protected-mode no");
         sentinelConfigs.add(String.format(sentinelPortConfig, sentinelPort));
         sentinelConfigs.add(String.format(sentinelMonitorConfig, masterName, masterHost, masterPort));
+        //sentinel auth-pass
+        String authPass = "sentinel auth-pass %s %s";
+        authPass = String.format(authPass, masterName, password);
+        sentinelConfigs.add(authPass);
 
         return sentinelConfigs;
     }
