@@ -37,8 +37,9 @@ public class Test {
 //        shutdownInstance("192.168.211.131", 6042, "pd25aggrzjhtctch");
 //        deployRedisInstance(ip, port, ConstUtil.CACHE_REDIS_STANDALONE);
 //        testDeployCluster();
-        String password = "pd25aggrzjhtctch";
-        startRedisInstanceAtPort(ip, port, ConstUtil.CACHE_REDIS_STANDALONE, password);
+//        String password = "pd25aggrzjhtctch";
+//        startRedisInstanceAtPort(ip, port, ConstUtil.CACHE_REDIS_STANDALONE, password);
+        testDeploySentinel();
     }
 
     private static void testDeployCluster(){
@@ -61,11 +62,11 @@ public class Test {
 //        1.2 slave 端口号:6341
 //        1.3 sentinel 端口号: 26340、26341、26342
 //        1.4 封装原生redis 提供configRewrite方法
-        String masterHost = "192.168.211.129";
+        String masterHost = "192.168.211.131";
         int masterPort = 6340;
-        String[] slaveHosts = {"192.168.211.129"};
+        String[] slaveHosts = {"192.168.211.131"};
         int slavePort = 6341;
-        String[] sentinelIps = {"192.168.211.129"};
+        String[] sentinelIps = {"192.168.211.131"};
         int sentinelPorts[] = {26340, 26341, 26342};
         int type = ConstUtil.CACHE_REDIS_STANDALONE;
         List<WebJedis> webJedisList = new ArrayList<WebJedis>();

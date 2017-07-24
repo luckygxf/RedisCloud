@@ -79,6 +79,7 @@ public class AgentCommunication {
      * 在指定端口运行哨兵
      * */
     public static boolean runSentinel(String sentinelHost, int sentinelPort, String confFileName, List<String> sentinelConfigs, String runShell, String machinePath){
+        logger.info("sentinel configs = {}", sentinelConfigs);
         UDPClientObject_Pb.UDPClientObject.Builder udpClientObjectBuilder = UDPClientObject_Pb.UDPClientObject.newBuilder();
         udpClientObjectBuilder.setCommand(UDPClientObject_Pb.RequestCommand.CMD_runSentinel);
 

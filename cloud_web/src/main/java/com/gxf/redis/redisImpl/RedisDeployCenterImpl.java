@@ -127,10 +127,12 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         //1.3 添加slaveof配置
         boolean slaveOfSuccess = slaveOf(masterHost, masterPort, slaveHost, slavePort, password);
         if(!slaveOfSuccess){
-            logger.error("slaveof masterHost:{}, masterPort:{}, slaveHost:{}, slavePort:{}", masterHost, masterPort
+            logger.error("slaveof masterHost:{}, masterPort:{}, slaveHost:{}, slavePort:{} failed", masterHost, masterPort
                             , slaveHost, slavePort);
             return false;
         }
+        logger.info("slaveof masterHost:{}, masterPort:{}, slaveHost:{}, slavePort:{} success", masterHost, masterPort
+                , slaveHost, slavePort);
 
         //1.4 运行sentinel group
         boolean isSentinelRun = runSentinelGroup(sentinelIps[0], sentinelPorts, masterHost, masterPort, password, jedisList);
@@ -378,9 +380,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
      * */
     private boolean runSentinelGroup(String sentinelIp,int sentinelPorts[], String masterHost, int masterPort, String password, List<WebJedis> jedisList){
         String masterName = getMasterName(masterHost, masterPort);
-//        for(int i = 0; i < sentinelPorts.length; i++){
-//            sentinelPorts[i] += RedisProtocol.REDIS_SENTINEL_BASE_PORT + sentinelPorts[i];
-//        }
+
         String sentinelConfNames[] = new String[sentinelPorts.length];
         for(int i = 0; i < sentinelPorts.length; i++){
             sentinelConfNames[i] = RedisProtocol.getConfigFileName(sentinelPorts[i], ConstUtil.CACHE_REDIS_SENTINEL);

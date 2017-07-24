@@ -30,7 +30,7 @@ public class MachineCenter {
         try {
             CommandExec.execute(shell);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         success = CommandExec.isPortUsed(port);
         if(success){
@@ -40,10 +40,11 @@ public class MachineCenter {
         }
         if(!success){
             success = CommandExec.isRedisRun(port, password, type);
+            logger.info("success = {}", success);
             if(success){
-                System.out.println("redis is run at port = " + port);
+                logger.info("redis is run at port = {}", port);
             }else {
-                System.out.println("redis is not run at port = " + port);
+                logger.info("redis is not run at port = {}" , port);
             }
         }
 

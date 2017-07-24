@@ -82,7 +82,7 @@ public class CommandExec {
                 return false;
             } //if
         } catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
         return isUsed;
@@ -100,7 +100,7 @@ public class CommandExec {
         try{
             process = new ProcessBuilder(new String[]{"/bin/bash", "-c", command}).start();
         } catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
         final Process finalProcess = process;
@@ -131,7 +131,7 @@ public class CommandExec {
                     try{
                         bufferedReader.close();
                     } catch (Exception e){
-                        e.printStackTrace();
+                        logger.error(e.getMessage(), e);
                     }
                 }
 
@@ -180,7 +180,7 @@ public class CommandExec {
                     errorMessage.append(new String(buff, 0, readSize));
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             } //catch
         } while(readSize != -1); //while
 
@@ -204,7 +204,8 @@ public class CommandExec {
                 public boolean execute(){
                     String pong = jedis.ping();
                     logger.info("pong = {}", pong);
-                    return null != pong && pong.equals("PONG");
+                    logger.info("(null != pong && pong.equalsIgnoreCase(\"PONG\")) result = {}", (null != pong && pong.equalsIgnoreCase("PONG")));
+                    return (null != pong && pong.equalsIgnoreCase("PONG"));
                 }
             }.run();
         } catch (Exception e){
@@ -212,7 +213,6 @@ public class CommandExec {
             return  false;
         } finally {
             jedis.close();
-            return false;
         }
     }
 
