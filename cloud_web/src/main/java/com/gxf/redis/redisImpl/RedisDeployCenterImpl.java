@@ -70,6 +70,10 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         String configFileName = RedisProtocol.getConfigFileName(masterPort, type);
         String password = PasswordUtil.genRandomNum(16);
         List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(masterPort, password);
+        String masterauth = "masterauth %s";
+        masterauth = String.format(masterauth, password);
+        redisConfigs.add(masterauth);
+
         String runShell = RedisProtocol.getRunShell(masterPort, type);
         String machinePath = RedisProtocol.getMachinePath(masterPort, type);
         boolean isPortUsed = AgentCommunication.isPortUsed(masterHost, masterPort);
@@ -100,7 +104,6 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         machinePath = RedisProtocol.getMachinePath(slavePort, type);
         configFileName = RedisProtocol.getConfigFileName(slavePort, type);
 
-        String masterauth = "masterauth %s";
         masterauth = String.format(masterauth, password);
         redisConfigs.add(masterauth);
 

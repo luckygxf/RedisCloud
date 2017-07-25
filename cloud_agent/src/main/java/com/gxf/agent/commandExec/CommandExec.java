@@ -139,7 +139,7 @@ public class CommandExec {
             }
         }); //resultFuture
 
-        String result = resultFutrue.get(3000, TimeUnit.MILLISECONDS);
+        String result = "";
 
         try{
             boolean success = process.waitFor(3000, TimeUnit.MILLISECONDS);
@@ -147,10 +147,10 @@ public class CommandExec {
                 System.out.println("process.waitFor Failed.");
                 return "";
             }
-
+            result = resultFutrue.get(3000, TimeUnit.MILLISECONDS);
             return result;
         } catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if(null != process){
                 process.destroy();

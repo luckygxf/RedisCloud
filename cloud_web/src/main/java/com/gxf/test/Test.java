@@ -39,8 +39,8 @@ public class Test {
 //        testDeployCluster();
 //        String password = "pd25aggrzjhtctch";
 //        startRedisInstanceAtPort(ip, port, ConstUtil.CACHE_REDIS_STANDALONE, password);
-//        testDeploySentinel();
-        testSentinelFailover();
+        testDeploySentinel();
+//        testSentinelFailover();
     }
 
     private static void testDeployCluster(){
