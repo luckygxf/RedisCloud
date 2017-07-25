@@ -663,4 +663,63 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         }
     }
 
+    /**
+     * 添加sentinel
+     * */
+    @Override
+    public boolean addSentinel(String host, int port, String masterName, String password, String masterHost, int masterPort) {
+        String sentinelConfFileName = RedisProtocol.getConfigFileName(port, ConstUtil.CACHE_REDIS_SENTINEL);
+        List<String> sentinelConfigs = SentinelConfigUtil.getSentinelConfigs(masterHost, masterPort, password, masterName, host, port);
+        String runShell = RedisProtocol.getRunShell(port, ConstUtil.CACHE_REDIS_SENTINEL);
+        String machinePath = RedisProtocol.getMachinePath(port, ConstUtil.CACHE_REDIS_SENTINEL);
+        boolean isPortUsed = AgentCommunication.isPortUsed(host, port);
+        if(isPortUsed){
+            logger.error("host:{}, port:{} is used", host, port);
+            return false;
+        }
+        boolean isRunSuccess = AgentCommunication.runSentinel(host, port, sentinelConfFileName, sentinelConfigs, runShell, machinePath);
+        if(!isRunSuccess){
+            logger.error("add sentinel to host:{}, port:{} failed.", host, port);
+            return false;
+        }
+        logger.info("add sentinel to host:{}, port:{} success.", host, port);
+
+        return true;
+    }
+
+    /**
+     * 添加slave
+     * */
+    @Override
+    public boolean addSlave(String host, int port, String masterHost, int masterPort, String password) {
+        boolean isPortUsed = AgentCommunication.isPortUsed(host, port);
+        if(isPortUsed){
+            logger.error("host:{}, port:{} is used.", host, port);
+            return false;
+        }
+        logger.info("host:{}, port:{} is not used.", host, port);
+
+        String confFileName = RedisProtocol.getConfigFileName(port, ConstUtil.CACHE_REDIS_STANDALONE);
+        String runShell = RedisProtocol.getRunShell(port, ConstUtil.CACHE_REDIS_STANDALONE);
+        String machinePath = RedisProtocol.getMachinePath(port, ConstUtil.CACHE_REDIS_STANDALONE);
+        List<String> configs = RedisConfigUtil.getMinRedisInstanceConfig(port, password);
+        String masterauth = "masterauth %s";
+        masterauth = String.format(masterauth, password);
+        configs.add(masterauth);
+
+        boolean isRunSuccess = AgentCommunication.runInstance(host, port, ConstUtil.CACHE_REDIS_STANDALONE, password, confFileName, configs, runShell, machinePath);
+        if(!isRunSuccess){
+            logger.error("runInstance host:{}, port:{} failed.", host, port);
+            return false;
+        }
+        logger.info("runInstance host:{}, port:{} success.", host, port);
+        boolean isSlave = slaveOf(masterHost, masterPort, host, port, password);
+        if(!isSlave){
+            logger.error("slaveof masterhost:{}, masterport:{}, slavehost:{}, slaveport:{}", masterHost, masterPort, host, port);
+            return false;
+        }
+        logger.info("add slave instance success, masterhost:{}, masterport:{}, slavehost:{}, slaveport:{}", masterHost, masterPort, host, port);
+        return true;
+    }
+
 }

@@ -39,8 +39,10 @@ public class Test {
 //        testDeployCluster();
 //        String password = "pd25aggrzjhtctch";
 //        startRedisInstanceAtPort(ip, port, ConstUtil.CACHE_REDIS_STANDALONE, password);
-        testDeploySentinel();
 //        testSentinelFailover();
+//        testAddSentinel();
+//        testDeploySentinel();
+        testAddSlave();
     }
 
     private static void testDeployCluster(){
@@ -146,5 +148,27 @@ public class Test {
 
     public static void startRedisInstanceAtPort(String ip, int port, int type, String password){
         machineCenter.startProcessAtPort(ip, port, type, password);
+    }
+
+    public static void testAddSentinel(){
+        String ip = "192.168.211.131";
+        String password = "g6noupkwcqmo0ch6";
+        int port = 26343;
+        String masterName = "sentinel-192.168.211.131-6340";
+        String masterHost = ip;
+        int masterPort = 6341;
+        redisDeployCenter.addSentinel(ip, port, masterName, password, masterHost, masterPort);
+    }
+
+    public static void testAddSlave(){
+        int port = 6344;
+        for(int i = 0; i < 1000; i++){
+            String host = "192.168.211.131";
+            port += i;
+            String masterHost = host;
+            int masterPort = 6340;
+            String password = "0rhzn7glpkd8cada";
+            redisDeployCenter.addSlave(host, port, masterHost, masterPort, password);
+        }
     }
 }

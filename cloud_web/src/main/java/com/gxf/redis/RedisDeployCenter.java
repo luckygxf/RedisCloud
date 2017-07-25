@@ -50,4 +50,14 @@ public interface RedisDeployCenter {
      * 手动进行failover进行主从切换
      * */
     boolean sentinelFailover(String ip, int port, String masterName);
+
+    /**
+     * 添加sentinel
+     * */
+    boolean addSentinel(String host, int port, String masterName, String password, String masterHost, int masterPort);
+
+    /**
+     * 添加slave
+     * */
+    boolean addSlave(String host, int port, String masterHost, int masterPort, String password);
 }
