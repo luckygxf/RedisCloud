@@ -2,6 +2,9 @@
 <head>
     <title>Test</title>
 </head>
+
+</head>
 <body>
 <h1>hello spring boot</h1>
+    welcome ${name}
 </body>
