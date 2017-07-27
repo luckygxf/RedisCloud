@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gxf.dao.InstanceInfoDao">
+    <!--<resultMap id="instanceConfigMap" type="com.gxf.entity.InstanceConfig">-->
+        <!--<id property="id" column="id"/>-->
+        <!--<result property="configKey" column="config_key"/>-->
+        <!--<result property="configValue" column="config_value"/>-->
+        <!--<result property="info" column="info"/>-->
+        <!--<result property="updateTime" column="update_time"/>-->
+        <!--<result property="type" column="type"/>-->
+        <!--<result property="status" column="status"/>-->
+    <!--</resultMap>-->
+
+    <insert id="addInstanceInfo" parameterType="com.gxf.entity.InstanceInfo">
+        insert into instance_info(host, port, password) VALUES (#{host}, #{port}, #{password})
+    </insert>
+</mapper>

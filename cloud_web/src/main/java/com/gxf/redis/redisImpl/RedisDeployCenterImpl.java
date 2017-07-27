@@ -4,6 +4,8 @@ import com.gxf.common.util.ConstUtil;
 import com.gxf.common.util.IdempotentConfirmer;
 import com.gxf.communication.AgentCommunication;
 import com.gxf.constant.EmptyObjectConst;
+import com.gxf.dao.InstanceInfoDao;
+import com.gxf.entity.InstanceInfo;
 import com.gxf.protocol.Protocol;
 import com.gxf.protocol.RedisProtocol;
 import com.gxf.redis.RedisCenter;
@@ -17,6 +19,7 @@ import com.gxf.util.StringUtil;
 import com.gxf.webJedis.WebJedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.exceptions.JedisDataException;
 import sun.management.AgentConfigurationError;
 
@@ -30,7 +33,10 @@ import java.util.jar.JarException;
  */
 public class RedisDeployCenterImpl implements RedisDeployCenter {
     private static Logger logger = LoggerFactory.getLogger(RedisDeployCenterImpl.class);
-    private static RedisCenter redisCenter = new RedisCenterImpl();
+    @Autowired
+    private static RedisCenter redisCenter;
+    @Autowired
+    private InstanceInfoDao instanceInfoDao;
 
     @Override
     public boolean deploySentinelInstance(long appId, String masterHost, String[] slaveHosts, int maxMemory, String[] sentinelIps, int appPort, List<WebJedis> jedisList) {
@@ -53,10 +59,18 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
 
         boolean isSuccess = AgentCommunication.runInstance(host, port, type, password, configName, redisConfigs, runShell, machinePath);
         if(isSuccess){
-            System.out.println("redis deploy success");
+            logger.info("redis deploy success");
         }else{
-            System.out.println("redis deploy fail");
+            logger.info("redis deploy fail");
+            return false;
         }
+        //保存到数据库
+        InstanceInfo instanceInfo = new InstanceInfo();
+        instanceInfo.setHost(host);
+        instanceInfo.setPort(port);
+        instanceInfo.setPassword(password);
+        instanceInfoDao.addInstanceInfo(instanceInfo);
+
         return isSuccess;
 
     }
