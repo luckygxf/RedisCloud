@@ -28,7 +28,7 @@ public class Test {
 
     private static String ip = "192.168.211.131";
 //    private static String ip = "127.0.0.1";
-    private static int port = 6042;
+    private static int port = 6379;
     //TODO:这里可以考虑用spring注入
     private static RedisDeployCenter redisDeployCenter = new RedisDeployCenterImpl();
     private static MachineCenter machineCenter = new MachineCenterImpl();
@@ -42,7 +42,8 @@ public class Test {
 //        testSentinelFailover();
 //        testAddSentinel();
 //        testDeploySentinel();
-        testAddSlave();
+//        testAddSlave();
+        testConnectRedis();
     }
 
     private static void testDeployCluster(){
@@ -100,9 +101,11 @@ public class Test {
 
     public static void testConnectRedis(){
         Jedis jedis = new Jedis(ip, port);
-        jedis.set("name", "guanxiangfei");
-        String value = jedis.get("name");
+//        jedis.set("name", "guanxiangfei1111");
+        String value = jedis.get("name1111");
+        long ttl = jedis.ttl("name");
         System.out.println("value = " + value);
+        System.out.println("ttl = " + ttl);
     }
 
     public static void readFile(String filePath){

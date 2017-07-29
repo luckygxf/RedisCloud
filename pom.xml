@@ -17,6 +17,5 @@
         <module>cloud_common</module>
         <module>cloud_jedis</module>
         <module>cloud_monitor</module>
-        <module>cloud_monitor</module>
     </modules>
 </project>

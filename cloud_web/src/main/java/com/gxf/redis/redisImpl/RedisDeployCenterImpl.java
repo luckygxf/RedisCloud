@@ -12,10 +12,7 @@ import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
 import com.gxf.redis.util.RedisClusterNode;
 import com.gxf.test.Test;
-import com.gxf.util.PasswordUtil;
-import com.gxf.util.RedisConfigUtil;
-import com.gxf.util.SentinelConfigUtil;
-import com.gxf.util.StringUtil;
+import com.gxf.util.*;
 import com.gxf.webJedis.WebJedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +61,10 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
             logger.info("redis deploy fail");
             return false;
         }
+
+        //新建etcd节点
+        EtcdUtil.createInstanceNode(host, port);
+
         //保存到数据库
         InstanceInfo instanceInfo = new InstanceInfo();
         instanceInfo.setHost(host);

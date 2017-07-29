@@ -1,11 +1,15 @@
 1. monitor监控
     1.1 监控redis实例 redis客户端发送info命令
     1.2 监控机器信息 agent执行top命令
+    1.3 monitor先做单节点monitor
+    1.4 创建redis实例向etcd注册 /com/gxf/redis/cloud/applist/
+    1.5 启动agent实例向etcd注册 /com/gxf/redis/cloud/machinelist/
+    1.6 etcd单节点启动
 2. 配置中心：
     2.1
 3. 管理平台部署redis实例做的事情
     3.1 
-    
+4. 启动etcd，etcd客户端    
 ------------------------------------------------
 1. 用spring boot做一个填ip、port的页面
 2. 将数据用mybatis存到mysql中
