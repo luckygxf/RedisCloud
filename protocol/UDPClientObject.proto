@@ -22,4 +22,11 @@ enum RequestCommand{
     CMD_startRedisInstanceAtPort = 6;
 
     CMD_reportData = 7;
+
+    //client command
+    CMD_CLIENT_reportData = 8;
+    CMD_CLIENT_getAppInfoByKey = 9;
+
+    //monitor command
+    CMD_MONITOR_getMachineInfo = 10;
 }

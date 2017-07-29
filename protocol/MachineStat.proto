@@ -1,0 +1,38 @@
+syntax="proto3";
+
+package com.gxf.udp.proto;
+
+option java_outer_classname = "MachineStat_Pb";
+
+message MachineStat{
+    int64 id = 1;
+
+    int64 hostId = 2;
+
+    string ip = 3;
+
+    string cpuUsage = 4;
+
+    string load = 5;
+
+    string traffic = 6;
+
+    string memoryUsageRatio = 7;
+
+    string memoryFree = 8;
+
+    int32 memoryAllocated = 9;
+
+    string memoryTotal = 10;
+
+    repeated DiskUsageMapFileEntry disUsageMap = 11;
+
+    int64 createTime = 12;
+
+    int64 modifyTime = 13;
+}
+
+message DiskUsageMapFileEntry{
+    string key = 1;
+    string value = 2;
+}

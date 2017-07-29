@@ -59,6 +59,26 @@ public final class UDPClientObject_Pb {
      * <code>CMD_reportData = 7;</code>
      */
     CMD_reportData(7),
+    /**
+     * <pre>
+     *client command
+     * </pre>
+     *
+     * <code>CMD_CLIENT_reportData = 8;</code>
+     */
+    CMD_CLIENT_reportData(8),
+    /**
+     * <code>CMD_CLIENT_getAppInfoByKey = 9;</code>
+     */
+    CMD_CLIENT_getAppInfoByKey(9),
+    /**
+     * <pre>
+     *monitor command
+     * </pre>
+     *
+     * <code>CMD_MONITOR_getMachineInfo = 10;</code>
+     */
+    CMD_MONITOR_getMachineInfo(10),
     UNRECOGNIZED(-1),
     ;
 
@@ -98,6 +118,26 @@ public final class UDPClientObject_Pb {
      * <code>CMD_reportData = 7;</code>
      */
     public static final int CMD_reportData_VALUE = 7;
+    /**
+     * <pre>
+     *client command
+     * </pre>
+     *
+     * <code>CMD_CLIENT_reportData = 8;</code>
+     */
+    public static final int CMD_CLIENT_reportData_VALUE = 8;
+    /**
+     * <code>CMD_CLIENT_getAppInfoByKey = 9;</code>
+     */
+    public static final int CMD_CLIENT_getAppInfoByKey_VALUE = 9;
+    /**
+     * <pre>
+     *monitor command
+     * </pre>
+     *
+     * <code>CMD_MONITOR_getMachineInfo = 10;</code>
+     */
+    public static final int CMD_MONITOR_getMachineInfo_VALUE = 10;
 
 
     public final int getNumber() {
@@ -126,6 +166,9 @@ public final class UDPClientObject_Pb {
         case 5: return CMD_createRemoteFile;
         case 6: return CMD_startRedisInstanceAtPort;
         case 7: return CMD_reportData;
+        case 8: return CMD_CLIENT_reportData;
+        case 9: return CMD_CLIENT_getAppInfoByKey;
+        case 10: return CMD_MONITOR_getMachineInfo;
         default: return null;
       }
     }
@@ -793,13 +836,15 @@ public final class UDPClientObject_Pb {
       "\n\025UDPClientObject.proto\022\021com.gxf.udp.pro" +
       "to\"h\n\017UDPClientObject\022\021\n\tsessionID\030\001 \001(\005" +
       "\0222\n\007command\030\002 \001(\0162!.com.gxf.udp.proto.Re" +
-      "questCommand\022\016\n\006params\030\003 \001(\014*\315\001\n\016Request" +
+      "questCommand\022\016\n\006params\030\003 \001(\014*\250\002\n\016Request" +
       "Command\022\024\n\020CMD_executeShell\020\000\022\023\n\017CMD_run" +
       "Instance\020\001\022\023\n\017CMD_runSentinel\020\002\022\027\n\023CMD_r" +
       "unRedisCommand\020\003\022\022\n\016CMD_isPortUsed\020\004\022\030\n\024" +
       "CMD_createRemoteFile\020\005\022 \n\034CMD_startRedis" +
-      "InstanceAtPort\020\006\022\022\n\016CMD_reportData\020\007B\024B\022" +
-      "UDPClientObject_Pbb\006proto3"
+      "InstanceAtPort\020\006\022\022\n\016CMD_reportData\020\007\022\031\n\025" +
+      "CMD_CLIENT_reportData\020\010\022\036\n\032CMD_CLIENT_ge",
+      "tAppInfoByKey\020\t\022\036\n\032CMD_MONITOR_getMachin" +
+      "eInfo\020\nB\024B\022UDPClientObject_Pbb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
