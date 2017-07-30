@@ -11,10 +11,12 @@ import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.udp.proto.WebRequest_Pb;
 import com.gxf.udp.socket.UdpServerSocket;
+import com.gxf.util.EtcdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -29,9 +31,12 @@ public class Main {
         Properties agentProperties = PropertiesHelper.loadPropertiesFile("agent.properties");
         String serverHost = (String) agentProperties.get("udp_host");
         int serverPort = Integer.parseInt((String) agentProperties.get("udp_port"));
-
         UdpServerSocket udpServerSocket = new UdpServerSocket(serverHost, serverPort);
-        System.out.println("agent is started..");
+        //将agent注册到etcd
+        InetAddress address = InetAddress.getLocalHost();
+        String host = address.getHostAddress();
+        EtcdUtil.createMachineNode(host);
+        logger.info("agent is started..");
         while(true){
             byte[] receives = udpServerSocket.receive(); //blocked
             ArrayUtil.printByteArray(receives);
