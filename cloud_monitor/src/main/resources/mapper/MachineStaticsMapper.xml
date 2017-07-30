@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gxf.dao.MachineStaticsDao">
+    <select id="add" parameterType="com.gxf.entity.MachineStatics">
+        INSERT INTO machine_statistics(host_id, ip, cpu_usage, load, traffic, memory_usage_radio, memory_free, memory_total, create_time)
+        VALUES (#{hostId}, #{ip}, #{cpuUsage}, #{load}, #{traffic}, #{memoryUsageRatio}, #{memoryFree}, #{memoryTotal}, #{createTime});
+    </select>
+</mapper>

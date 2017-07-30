@@ -5,6 +5,7 @@
     1.4 创建redis实例向etcd注册 /com/gxf/redis/cloud/applist/
     1.5 启动agent实例向etcd注册 /com/gxf/redis/cloud/machinelist/
     1.6 etcd单节点启动
+    1.7 创建machine表，以及machine统计表
 2. 配置中心：
     2.1
 3. 管理平台部署redis实例做的事情
