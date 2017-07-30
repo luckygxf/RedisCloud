@@ -43,4 +43,48 @@ public class UdpServerSocket {
 
         datagramSocket.send(dp);
     }
+
+    public int getSO_RCVBUF() {
+        return SO_RCVBUF;
+    }
+
+    public byte[] getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
+    }
+
+    public DatagramPacket getDatagramPacket() {
+        return datagramPacket;
+    }
+
+    public void setDatagramPacket(DatagramPacket datagramPacket) {
+        this.datagramPacket = datagramPacket;
+    }
+
+    public DatagramSocket getDatagramSocket() {
+        return datagramSocket;
+    }
+
+    public void setDatagramSocket(DatagramSocket datagramSocket) {
+        this.datagramSocket = datagramSocket;
+    }
+
+    public InetSocketAddress getSocketAddress() {
+        return socketAddress;
+    }
+
+    public void setSocketAddress(InetSocketAddress socketAddress) {
+        this.socketAddress = socketAddress;
+    }
+
+    public String getOrgIp() {
+        return orgIp;
+    }
+
+    public void setOrgIp(String orgIp) {
+        this.orgIp = orgIp;
+    }
 }

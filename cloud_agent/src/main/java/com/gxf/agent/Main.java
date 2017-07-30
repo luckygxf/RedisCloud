@@ -5,6 +5,7 @@ import com.gxf.agent.commandExec.CommandExec;
 import com.gxf.common.constants.UDPResponseCode;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.common.util.PropertiesHelper;
+import com.gxf.controller.MachineDataCollectController;
 import com.gxf.controller.RedisInstanceDeployController;
 import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.proto.UDPServerObject_Pb;
@@ -162,6 +163,18 @@ public class Main {
                     resultCode = UDPResponseCode.FAIL;
                     serverResponse(udpServerSocket, udpClientObject, result, resultCode);
                 } //catch
+            }else if(udpClientObject.getCommand().equals(UDPClientObject_Pb.RequestCommand.CMD_MONITOR_getMachineInfo)){
+                logger.info("execute CMD_MONITOR_getMachineInfo start...");
+                try {
+                    data = MachineDataCollectController.getMachineInfo();
+                    serverResponse(udpServerSocket, udpClientObject, data, resultCode);
+                    logger.info("CMD_MONITOR_getMachineInfo success, machine ip:{}", udpServerSocket.getOrgIp());
+                } catch (Exception e){
+                    logger.error("CMD_MONITOR_getMachineInfo failed, machine ip:{}", udpServerSocket.getOrgIp());
+                    logger.error(e.getMessage(), e);
+                    resultCode = UDPResponseCode.FAIL;
+                    serverResponse(udpServerSocket, udpClientObject, data, resultCode);
+                }
             }
         } //while
     } //main

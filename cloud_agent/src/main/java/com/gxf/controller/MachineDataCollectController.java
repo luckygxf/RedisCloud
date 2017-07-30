@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,9 +27,11 @@ import static com.gxf.util.EmptyObjectConstant.EMPTY_STRING;
  */
 public class MachineDataCollectController {
     private final static String COMMAND_TOP = "top -b -n 1 | head -5";
+    private final static String COMMAND_DF_LH = "df -lh";
     private final static String LOAD_AVERAGE_STRING = "load average: ";
     private final static String MEM_USAGE_STRING = "KiB Mem :";
     private final static String BUFFER_CACHE = "buff/cache";
+    private final static String SWAP_USAGE_STRING = "KiB Swap:  ";
     private static Logger logger = LoggerFactory.getLogger(MachineDataCollectController.class);
 
     /**
@@ -51,6 +55,7 @@ public class MachineDataCollectController {
             String buffersMem = EMPTY_STRING;
             String cachedMem = EMPTY_STRING;
             while((line = bufferedReader.readLine()) != null){
+                logger.info("execute top line:{}", line);
                 if(StringUtil.isEmpty(line)){
                     continue;
                 }
@@ -92,15 +97,91 @@ public class MachineDataCollectController {
                 }else if(5 == lineNum){
                     //第五行通常是这样：
                     //KiB Swap:  2097148 total,  1904092 free,   193056 used.   103956 avail Mem
+                    String[] memArray = line.replace(SWAP_USAGE_STRING, EMPTY_STRING).split(BaseConstant.COMMA);
+                    if (memArray.length > 3){
+                        cachedMem =  matchMemLineNumber(memArray[3].trim());
+                    }else{
+                        cachedMem = "0";
+                    }
+                    if(com.gxf.util.StringUtil.isBlank(totalMem, freeMem, buffersMem)){
+                        logger.error("can not get totalMem, freeMem, buffersMem or cachedMem when" +
+                                "execute top command");
+                        throw new Exception("can not get totalMem, freeMem, buffersMem or cachedMem when" +
+                                "execute top command");
+                    }
+                    Long totalMemLong = NumberUtils.toLong(totalMem);
+                    Long freeMemLong = NumberUtils.toLong(freeMem);
+                    Long buffersMemLong = NumberUtils.toLong(buffersMem);
+                    Long cachedMemLong = NumberUtils.toLong(cachedMem);
 
+                    Long usedMemFree = freeMemLong + buffersMemLong + cachedMemLong;
+                    Double memoryUsage = 1 - (NumberUtils.toDouble(usedMemFree.toString()) /
+                                            NumberUtils.toDouble(totalMemLong.toString()) / 1.0);
+                    systemPerfomanceEntity.setMemoryTotal(String.valueOf(totalMemLong));
+                    systemPerfomanceEntity.setMemoryFree(String.valueOf(usedMemFree));
+                    DecimalFormat df = new DecimalFormat("0.0");
+                    systemPerfomanceEntity.setMemoryUsageRatio(df.format(memoryUsage * 100));
+                }else{
+                    continue;
                 }
-            }
+            } //parse the top output
+            process.destroy();
 
-
-
+            //统计磁盘使用情况
+            Map<String/**使用百分率*/, String/**挂载点*/> diskUsageMap = new HashMap<String, String>();
+            process = Runtime.getRuntime().exec(COMMAND_DF_LH);
+            //stderr
+            CommandExec.printExecStdErr(COMMAND_DF_LH, process);
+            bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            /**
+             * 执行df -lh命令 内容通常是这样的
+                 Filesystem               Size  Used Avail Use% Mounted on
+                 /dev/mapper/centos-root   18G   12G  6.3G  64% /
+                 devtmpfs                 474M     0  474M   0% /dev
+                 tmpfs                    489M  156K  489M   1% /dev/shm
+                 tmpfs                    489M   14M  476M   3% /run
+                 tmpfs                    489M     0  489M   0% /sys/fs/cgroup
+                 /dev/sda1                497M  157M  340M  32% /boot
+                 tmpfs                     98M   20K   98M   1% /run/user/1000
+                 /dev/sr0                 4.1G  4.1G     0 100% /run/media/guanxianseng/CentOS 7 x86_64
+             * */
+            boolean isFirstLine = true;
+            while((line = bufferedReader.readLine()) != null){
+                logger.info("execute df -lh line:{}", line);
+                if(isFirstLine){
+                    isFirstLine = false;
+                    continue;
+                }
+                if(StringUtil.isEmpty(line)){
+                    continue;
+                }
+                line = line.replaceAll("{1,}", BaseConstant.WORD_SEPARATOR);
+                String[] lineArray = line.split(BaseConstant.WORD_SEPARATOR);
+                if (6 != lineArray.length){
+                    continue;
+                }
+                String diskUsage = lineArray[4];
+                String mountedOn = lineArray[5];
+                diskUsageMap.put(mountedOn, diskUsage);
+            } //while
+            systemPerfomanceEntity.setDiskUsageMap(diskUsageMap);
+            //使用star统计当前网络流量 TODO
+            Double traffic = 0.0;
+            systemPerfomanceEntity.setTraffic(traffic.toString());
         } catch (Exception e){
             logger.error("getMachineInfo failed");
             logger.error(e.getMessage(), e);
+        } finally {
+            try{
+                if(null != bufferedReader){
+                    bufferedReader.close();
+                }
+            } catch (Exception e){
+                logger.error(e.getMessage(), e);
+            }
+            if (null != process){
+                process.destroy();
+            }
         }
 
         return machineStatsToPb(systemPerfomanceEntity);
