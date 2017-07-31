@@ -4,7 +4,10 @@
 
 <mapper namespace="com.gxf.dao.MachineStaticsDao">
     <select id="add" parameterType="com.gxf.entity.MachineStatics">
-        INSERT INTO machine_statistics(host_id, ip, cpu_usage, load, traffic, memory_usage_radio, memory_free, memory_total, create_time)
-        VALUES (#{hostId}, #{ip}, #{cpuUsage}, #{load}, #{traffic}, #{memoryUsageRatio}, #{memoryFree}, #{memoryTotal}, #{createTime});
+        INSERT INTO machine_statistics(host_id, ip, cpu_usage, `load`, traffic, memory_usage_ratio, memory_free, memory_total, create_time, `modify_time`)
+        VALUES (#{hostId}, #{ip}, #{cpuUsage}, #{load}, #{traffic}, #{memoryUsageRatio}, #{memoryFree}, #{memoryTotal}, #{createTime}, #{modifyTime});
+    </select>
+    <select id="queryAll" resultType="com.gxf.entity.MachineStatics">
+        SELECT  * from machine_statistics;
     </select>
 </mapper>
