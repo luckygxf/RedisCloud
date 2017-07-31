@@ -34,6 +34,12 @@ public class MachineDataCollectController {
     private final static String SWAP_USAGE_STRING = "KiB Swap:  ";
     private static Logger logger = LoggerFactory.getLogger(MachineDataCollectController.class);
 
+    public static void main(String[] args) {
+        String content = "1001332 total";
+        String result = matchMemLineNumber(content);
+        System.out.println("result = {}" + result);
+    }
+
     /**
      * 通过执行top命令获取机器信息
      * TODO:待完成
@@ -191,11 +197,12 @@ public class MachineDataCollectController {
      * 匹配字符串中的数字
      * */
     private static String matchMemLineNumber(String content){
+        logger.info("matchMemLineNumber content:{}", content);
         String result = EMPTY_STRING;
         if(null == content || EMPTY_STRING.equals(content.trim())){
             return result;
         }
-        Pattern pattern = Pattern.compile(content);
+        Pattern pattern = Pattern.compile("(\\d+)");
         Matcher matcher = pattern.matcher(content);
         if(matcher.find()){
             result = matcher.group(1);

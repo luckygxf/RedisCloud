@@ -3,6 +3,8 @@ package com.gxf.test;
 import com.gxf.dao.MachineStaticsDao;
 import com.gxf.dao.impl.MachineStaticsDaoImpl;
 import com.gxf.entity.MachineStatics;
+import com.gxf.machine.MachineTask;
+import com.gxf.machine.impl.MachineTaskImpl;
 
 import java.util.Date;
 import java.util.List;
@@ -12,22 +14,10 @@ import java.util.List;
  */
 public class Test {
     public static void main(String[] args) {
+        String ip = "192.168.211.131";
         MachineStaticsDao machineStaticsDao = new MachineStaticsDaoImpl();
-//        MachineStatics machineStatics = new MachineStatics();
-//        machineStatics.setIp("127.0.0.1");
-//        machineStatics.setHostId(1);
-//        machineStatics.setCpuUsage("ddd");
-//        machineStatics.setLoad("ddd");
-//        machineStatics.setTraffic("ddd");
-//        machineStatics.setMemoryUsageRatio("ddd");
-//        machineStatics.setMemoryFree("ddd");
-//        machineStatics.setMemoryTotal("ddd");
-//        machineStatics.setCreateTime(new Date());
-//        machineStatics.setModifyTime(new Date());
-//        machineStaticsDao.add(machineStatics);
-        List<MachineStatics> list = machineStaticsDao.queryAll();
-        for(MachineStatics machineStatics : list){
-            System.out.println(machineStatics.getCreateTime());
-        }
+        MachineTask machineTask = new MachineTaskImpl();
+        MachineStatics machineStatics = machineTask.getMachineInfo(ip);
+        machineStaticsDao.add(machineStatics);
     }
 }
