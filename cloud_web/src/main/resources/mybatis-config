@@ -21,5 +21,6 @@
     <mappers>
         <mapper resource="mapper/InstanceConfigDao.xml"/>
         <mapper resource="mapper/InstanceInfoDao.xml"/>
+        <mapper resource="mapper/MachineStaticsMapper.xml"/>
     </mappers>
 </configuration>
