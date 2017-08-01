@@ -5,6 +5,9 @@ import com.gxf.common.util.IPUtil;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Created by 58 on 2017/7/19.
@@ -12,7 +15,8 @@ import java.net.UnknownHostException;
 public class Test {
 
     public static void main(String[] args) throws UnknownHostException {
-        String s = "/v2/keys/com/gxf/redis/cloud/machinelist/192.168.211.131";
-        System.out.println(s.length());
+        Map<String, String> map = new Hashtable<String, String>();
+        map.put(null, "dddd");
+        System.out.println(map.get(null));
     }
 }

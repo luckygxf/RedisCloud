@@ -34,8 +34,6 @@ public class Main {
         int serverPort = Integer.parseInt((String) agentProperties.get("udp_port"));
         UdpServerSocket udpServerSocket = new UdpServerSocket(serverHost, serverPort);
         //将agent注册到etcd
-        InetAddress address = InetAddress.getLocalHost();
-        //针对虚拟机使用hostname -i获取本机ip
         String host = IPUtil.getVirtualMachineIP().trim();
         logger.info("agent local host:{}",host);
         EtcdUtil.createMachineNode(host);

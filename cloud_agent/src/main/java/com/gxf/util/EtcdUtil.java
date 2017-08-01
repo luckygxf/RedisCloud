@@ -41,7 +41,7 @@ public class EtcdUtil {
      * */
     public static void createMachineNode(String host){
         try {
-            etcd.put(Etcd_Machine_Bath_Path + host, Status_Add).send().get();
+            etcd.put(Etcd_Machine_Bath_Path + host, Status_Add).send();
             logger.info("add machine list success, host:{}", host);
         }  catch (Exception e) {
             logger.error("add machine list failed, host:{}", host);

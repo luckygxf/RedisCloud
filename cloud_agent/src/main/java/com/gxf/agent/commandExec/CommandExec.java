@@ -125,7 +125,9 @@ public class CommandExec {
                     if(lineNumber++ > 1){
                         stdoutContent.append(System.lineSeparator());
                     }
-                    stdoutContent.append(line);
+                    if(null != line){
+                        stdoutContent.append(line);
+                    }
                 } while(line != null);
                 if(null != bufferedReader){
                     try{
