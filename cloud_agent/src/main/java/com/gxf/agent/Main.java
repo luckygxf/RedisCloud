@@ -12,6 +12,7 @@ import com.gxf.udp.proto.UDPServerObject_Pb;
 import com.gxf.udp.proto.WebRequest_Pb;
 import com.gxf.udp.socket.UdpServerSocket;
 import com.gxf.util.EtcdUtil;
+import com.gxf.util.IPUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,9 @@ public class Main {
         UdpServerSocket udpServerSocket = new UdpServerSocket(serverHost, serverPort);
         //将agent注册到etcd
         InetAddress address = InetAddress.getLocalHost();
-        String host = address.getHostAddress();
+        //针对虚拟机使用hostname -i获取本机ip
+        String host = IPUtil.getVirtualMachineIP().trim();
+        logger.info("agent local host:{}",host);
         EtcdUtil.createMachineNode(host);
         logger.info("agent is started..");
         while(true){
