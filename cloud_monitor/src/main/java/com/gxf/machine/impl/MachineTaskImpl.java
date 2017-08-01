@@ -2,25 +2,37 @@ package com.gxf.machine.impl;
 
 import com.gxf.common.constants.UDPResponseCode;
 import com.gxf.common.util.ConstUtil;
+import com.gxf.dao.MachineStaticsDao;
+import com.gxf.dao.impl.MachineStaticsDaoImpl;
 import com.gxf.entity.MachineStatics;
-import com.gxf.entity.MachineStats;
 import com.gxf.machine.MachineTask;
 import com.gxf.udp.proto.MachineStat_Pb;
 import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.socket.ResultData;
 import com.gxf.udp.socket.UDPClientSocket;
+import com.gxf.util.EtcdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * Created by 58 on 2017/7/31.
  * 机器相关的任务 收集机器信息
  */
 public class MachineTaskImpl implements MachineTask {
-
+//    private static ExecutorService executorService = new ThreadPoolExecutor(5, 5, 60, TimeUnit.SECONDS,
+//                                                    new LinkedBlockingQueue<Runnable>(), new NameThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
     private static Logger logger = LoggerFactory.getLogger(MachineTaskImpl.class);
+    private static MachineStaticsDao machineStaticsDao = new MachineStaticsDaoImpl();
+    private static ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
+
+    public static void main(String[] args) {
+        MachineTask task = new MachineTaskImpl();
+        scheduledExecutorService.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
+    }
 
     /**
      * 收集 ip 机器信息
@@ -53,5 +65,25 @@ public class MachineTaskImpl implements MachineTask {
             logger.error(e.getMessage(), e);
         } //catch
         return machineStatics;
+    }
+
+    /**
+     * 定期监控机器
+     * 1. 从etcd获取要监控的机器
+     * 2. 启动线程池，每隔1分钟从agent拉取数据
+     * 3. 更新收集到的数据到数据库
+     * */
+    public void run(){
+        List<String> machineIPs = EtcdUtil.getAllMachineIP();
+        for(String machine : machineIPs){
+            logger.info("start collect machine:{} info..", machine);
+            MachineStatics machineStatics = getMachineInfo(machine);
+            MachineStatics machineStaticsFromDB = machineStaticsDao.queryMachineStaticsByIp(machine);
+            if (null == machineStaticsFromDB){
+                machineStaticsDao.add(machineStatics);
+            }else{
+                machineStaticsDao.updateMachineStatics(machineStatics);
+            } //else
+        } //for
     }
 }

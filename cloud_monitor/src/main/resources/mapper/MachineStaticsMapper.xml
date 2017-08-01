@@ -10,4 +10,11 @@
     <select id="queryAll" resultType="com.gxf.entity.MachineStatics">
         SELECT  * from machine_statistics;
     </select>
+    <update id="updateMachineStatics" parameterType="com.gxf.entity.MachineStatics">
+        UPDATE  machine_statistics set cpu_usage=#{cpuUsage}, `load`=#{load}, traffic=#{traffic}, memory_usage_ratio=#{memoryUsageRatio}, memory_free=#{memoryFree},
+        memory_total = #{memoryTotal}, `modify_time`=#{modifyTime} where ip=#{ip};
+    </update>
+    <select id="queryMachineStaticsByIp" resultType="com.gxf.entity.MachineStatics" >
+        select * from machine_statistics where ip = #{ip}
+    </select>
 </mapper>

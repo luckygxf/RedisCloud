@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@include file="head/head.jsp"%>
 <head>
     <title>机器统计信息</title>
@@ -25,11 +26,21 @@
                     <td>${machineStatics.ip}</td>
                     <td>${machineStatics.cpuUsage}</td>
                     <td>${machineStatics.load}</td>
-                    <td>${machineStatics.memoryUsageRatio}</td>
-                    <td>${machineStatics.memoryFree / 1024}MB</td>
-                    <td>${machineStatics.memoryTotal / 1024}MB</td>
-                    <td>${machineStatics.createTime}</td>
-                    <td>${machineStatics.modifyTime}</td>
+                    <td>
+                            ${machineStatics.memoryUsageRatio}%
+                    </td>
+                    <td>
+                        <fmt:formatNumber type="number" maxFractionDigits="2" value="${machineStatics.memoryFree / 1024}" />MB
+                    </td>
+                    <td>
+                        <fmt:formatNumber type="number" maxFractionDigits="2" value="${machineStatics.memoryTotal / 1024}" />MB
+                    </td>
+                    <td>
+                        <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${machineStatics.createTime}" />
+                    </td>
+                    <td>
+                        <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${machineStatics.modifyTime}" />
+                    </td>
                 </tr>
             </c:forEach>
         </tbody>

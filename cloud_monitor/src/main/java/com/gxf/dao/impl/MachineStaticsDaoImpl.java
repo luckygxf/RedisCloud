@@ -24,6 +24,7 @@ public class MachineStaticsDaoImpl implements MachineStaticsDao {
             session = sessionFactory.openSession();
             MachineStaticsDao machineStaticsDao = session.getMapper(MachineStaticsDao.class);
             machineStaticsDao.add(machineStatics);
+            session.commit();
             if(session != null){
                 session.close();
             }
@@ -63,5 +64,60 @@ public class MachineStaticsDaoImpl implements MachineStaticsDao {
         } //finally
 
         return result;
+    }
+
+    /**
+     * 更新机器收集信息
+     * */
+    public void updateMachineStatics(MachineStatics machineStatics){
+        SqlSession session = null;
+        try{
+            session = sessionFactory.openSession();
+            MachineStaticsDao machineStaticsDao = session.getMapper(MachineStaticsDao.class);
+            machineStaticsDao.updateMachineStatics(machineStatics);
+            session.commit();
+            if(session != null){
+                session.close();
+            }
+        } catch (Exception e){
+            logger.error("MachineStaticsDao udpate statics failed.");
+            logger.error(e.getMessage(), e);
+        } finally {
+            if(session != null){
+                try{
+                    session.close();
+                } catch (Exception e){
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        } //finally
+    }
+
+    /**
+     * 根据机器IP查询机器收集信息
+     * */
+    public MachineStatics queryMachineStaticsByIp(String ip) {
+        MachineStatics machineStatics = null;
+        SqlSession session = null;
+        try{
+            session = sessionFactory.openSession();
+            MachineStaticsDao machineStaticsDao = session.getMapper(MachineStaticsDao.class);
+            machineStatics = machineStaticsDao.queryMachineStaticsByIp(ip);
+            if(session != null){
+                session.close();
+            }
+        } catch (Exception e){
+            logger.error("MachineStaticsDao udpate statics failed.");
+            logger.error(e.getMessage(), e);
+        } finally {
+            if(session != null){
+                try{
+                    session.close();
+                } catch (Exception e){
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        } //finally
+        return machineStatics;
     }
 }

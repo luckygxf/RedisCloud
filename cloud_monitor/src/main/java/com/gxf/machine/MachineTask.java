@@ -5,7 +5,7 @@ import com.gxf.entity.MachineStatics;
 /**
  * Created by 58 on 2017/7/31.
  */
-public interface MachineTask {
+public interface MachineTask extends Runnable {
 
     /**
      * 收集机器信息

@@ -16,8 +16,13 @@ public class Test {
     public static void main(String[] args) {
         String ip = "192.168.211.131";
         MachineStaticsDao machineStaticsDao = new MachineStaticsDaoImpl();
-        MachineTask machineTask = new MachineTaskImpl();
-        MachineStatics machineStatics = machineTask.getMachineInfo(ip);
-        machineStaticsDao.add(machineStatics);
+//        MachineTask machineTask = new MachineTaskImpl();
+        MachineStatics machineStatics = machineStaticsDao.queryMachineStaticsByIp(ip);
+        System.out.println(new Date());
+        machineStatics.setModifyTime(new Date());
+//        machineStatics.setLoad("444");
+        System.out.println(machineStatics.getCpuUsage());
+        machineStaticsDao.updateMachineStatics(machineStatics);
+//        machineStaticsDao.add(machineStatics);
     }
 }

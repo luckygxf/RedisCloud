@@ -18,4 +18,14 @@ public interface MachineStaticsDao {
      * 获取所有机器统计信息
      * */
     List<MachineStatics> queryAll();
+
+    /**
+     * 更新机器统计信息
+     * */
+    void updateMachineStatics(MachineStatics machineStatics);
+
+    /**
+     * 根据IP查询机器收集信息
+     * */
+    MachineStatics queryMachineStaticsByIp(String ip);
 }
