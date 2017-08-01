@@ -7,3 +7,4 @@
 4. 部署
     agent:
         1. 部署在机器的目录:/opt/redis_cloud
+5. redis java客户端使用封装的WJedis

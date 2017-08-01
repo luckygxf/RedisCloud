@@ -41,7 +41,7 @@ public class Test {
 //        startRedisInstanceAtPort(ip, port, ConstUtil.CACHE_REDIS_STANDALONE, password);
 //        testSentinelFailover();
 //        testAddSentinel();
-//        testDeploySentinel();
+        testDeploySentinel();
 //        testAddSlave();
         testConnectRedis();
     }
