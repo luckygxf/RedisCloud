@@ -19,14 +19,15 @@ import java.util.Properties;
 public class EtcdUtil {
     private static Logger logger = LoggerFactory.getLogger(EtcdUtil.class);
     private static final String Etcd_Machine_Bath_Path = "/com/gxf/redis/cloud/machinelist/";
+    private static final String Etcd_App_Bath_Path = "/com/gxf/redis/cloud/applist/";
     private static final String Status_Add = "add";
     private static EtcdClient etcd;
 
     public static void main(String[] args) {
 //        createMachineNode("192.168.211.131");
-        List<String> machines = getAllMachineIP();
-        for(String machine : machines){
-            System.out.println(machine);
+        List<HostAndPort> list = getAllAppList();
+        for(HostAndPort hostAndPort : list){
+            System.out.println(hostAndPort.getHost() + ":" + hostAndPort.getPort());
         }
     }
 
@@ -78,4 +79,27 @@ public class EtcdUtil {
         }
         return machines;
     }
+
+    /**
+     * 获取注册在etcd里面的app节点
+     * */
+    public static List<HostAndPort> getAllAppList(){
+        List<HostAndPort> appList = new ArrayList<HostAndPort>();
+        try {
+            EtcdResponsePromise<EtcdKeysResponse> etcdResponsePromise = etcd.getDir(Etcd_App_Bath_Path).recursive().send();
+            EtcdKeysResponse response = etcdResponsePromise.get();
+            EtcdKeysResponse.EtcdNode node = response.getNode();
+            List<EtcdKeysResponse.EtcdNode> listNodes = node.getNodes();
+            for (EtcdKeysResponse.EtcdNode node1 : listNodes){
+                String hostAndPort = node1.getKey().substring(Etcd_Machine_Bath_Path.length());
+                String host = hostAndPort.split(":")[0];
+                int port = Integer.valueOf(hostAndPort.split(":")[1].trim());
+                appList.add(new HostAndPort(host, port));
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return appList;
+    }
+
 }

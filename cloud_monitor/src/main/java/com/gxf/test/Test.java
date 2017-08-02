@@ -1,17 +1,6 @@
 package com.gxf.test;
 
-import com.gxf.dao.InstanceStaticsDao;
-import com.gxf.dao.MachineStaticsDao;
-import com.gxf.dao.impl.InstanceStaticsDaoImpl;
-import com.gxf.dao.impl.MachineStaticsDaoImpl;
-import com.gxf.entity.InstatnceStatics;
-import com.gxf.entity.MachineStatics;
-import com.gxf.machine.MachineTask;
-import com.gxf.machine.impl.MachineTaskImpl;
 import redis.clients.jedis.Jedis;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by 58 on 2017/7/31.
@@ -30,7 +19,7 @@ public class Test {
 //        machineStaticsDao.updateMachineStatics(machineStatics);
 //        machineStaticsDao.add(machineStatics);
 //        InstanceStaticsDao instanceStaticsDao = new InstanceStaticsDaoImpl();
-//        InstatnceStatics instatnceStatics = new InstatnceStatics();
+//        InstanceStatics instatnceStatics = new InstanceStatics();
 //        instatnceStatics.setIp(ip);
 //        instanceStaticsDao.add(instatnceStatics);
         Jedis jedis = new Jedis(ip, port);

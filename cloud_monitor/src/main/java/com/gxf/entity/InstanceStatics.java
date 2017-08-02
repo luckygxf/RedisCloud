@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by 58 on 2017/8/1.
  * Redis实例统计数据
  */
-public class InstatnceStatics {
+public class InstanceStatics {
     private long id;
     private long instId;
     private long appId;
@@ -14,7 +14,9 @@ public class InstatnceStatics {
     private String ip;
     private int port;
     private byte role;
+    //单位byte
     private long maxMemory;
+    //单位byte
     private long usedMemory;
     private long currItems;
     private int currConnections;
@@ -154,7 +156,7 @@ public class InstatnceStatics {
 
     @Override
     public String toString() {
-        return "InstatnceStatics{" +
+        return "InstanceStatics{" +
                 "id=" + id +
                 ", instId=" + instId +
                 ", appId=" + appId +
