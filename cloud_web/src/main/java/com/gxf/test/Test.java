@@ -43,7 +43,7 @@ public class Test {
 //        testAddSentinel();
         testDeploySentinel();
 //        testAddSlave();
-        testConnectRedis();
+//        testConnectRedis();
     }
 
     private static void testDeployCluster(){

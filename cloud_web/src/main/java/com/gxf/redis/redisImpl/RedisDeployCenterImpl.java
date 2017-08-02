@@ -31,7 +31,7 @@ import java.util.jar.JarException;
 public class RedisDeployCenterImpl implements RedisDeployCenter {
     private static Logger logger = LoggerFactory.getLogger(RedisDeployCenterImpl.class);
     @Autowired
-    private static RedisCenter redisCenter;
+    private RedisCenter redisCenter;
     @Autowired
     private InstanceInfoDao instanceInfoDao;
 

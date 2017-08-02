@@ -17,10 +17,11 @@ public class EtcdUtil {
     private static final String Machine_Base_Path = "/com/gxf/redis/cloud/machinelist/";
     private static Logger logger = LoggerFactory.getLogger(EtcdUtil.class);
     private static EtcdClient etcd;
+    private static final String AddStatus = "Add";
 
     public static void main(String[] args) {
         createInstanceNode("127.0.0.1", 6543);
-        deleteInstanceNode("127.0.0.1");
+        deleteInstanceNode("127.0.0.1", 6543);
     }
     static {
         try{
@@ -42,8 +43,9 @@ public class EtcdUtil {
      * ip + port
      * */
     public static void createInstanceNode(String host, int port){
+        String hostAndPort = host + ":" + port;
         try {
-            etcd.put(App_Base_Path + host, String.valueOf(port)).send().get();
+            etcd.put(App_Base_Path + hostAndPort, AddStatus).send().get();
             logger.info("etcd create node success host:{}, port:{}", host, port);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -54,7 +56,8 @@ public class EtcdUtil {
     /**
      * 删除redis实例对应的etcd节点
      * */
-    public static void deleteInstanceNode(String host){
+    public static void deleteInstanceNode(String host, int port){
+        String hostAndPort = host + ":" + port;
         try {
             etcd.delete(App_Base_Path + host).send().get();
             logger.info("etcd delete node success, host:{}", host);
