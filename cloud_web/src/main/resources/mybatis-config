@@ -22,5 +22,6 @@
         <mapper resource="mapper/InstanceConfigMapper.xml"/>
         <mapper resource="mapper/InstanceInfoMapper.xml"/>
         <mapper resource="mapper/MachineStaticsMapper.xml"/>
+        <mapper resource="mapper/InstanceStaticsMapper.xml"/>
     </mappers>
 </configuration>
