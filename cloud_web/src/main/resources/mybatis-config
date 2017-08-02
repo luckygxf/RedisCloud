@@ -19,8 +19,8 @@
     </environments>
 
     <mappers>
-        <mapper resource="mapper/InstanceConfigDao.xml"/>
-        <mapper resource="mapper/InstanceInfoDao.xml"/>
+        <mapper resource="mapper/InstanceConfigMapper.xml"/>
+        <mapper resource="mapper/InstanceInfoMapper.xml"/>
         <mapper resource="mapper/MachineStaticsMapper.xml"/>
     </mappers>
 </configuration>

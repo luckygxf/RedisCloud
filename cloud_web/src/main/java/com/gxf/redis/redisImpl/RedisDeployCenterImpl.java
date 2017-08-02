@@ -159,6 +159,11 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
             return false;
         }
         logger.info("runSentinelGroup success. sentileIp:{}, sentinel ports:{}", sentinelIps[0], sentinelPorts);
+        //1.5 更新到数据库
+        InstanceInfo masterInstanceInfo = new InstanceInfo(masterHost, masterPort, password);
+        saveOrUpdate(masterInstanceInfo);
+        InstanceInfo slaveInstatnceInfo = new InstanceInfo(slaveHost, slavePort, password);
+        saveOrUpdate(slaveInstatnceInfo);
         return true;
     }
 
@@ -735,6 +740,19 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         }
         logger.info("add slave instance success, masterhost:{}, masterport:{}, slavehost:{}, slaveport:{}", masterHost, masterPort, host, port);
         return true;
+    }
+
+    /**
+     * 如果数据库不存在就添加，存在就更新
+     * */
+    private void saveOrUpdate(InstanceInfo instanceInfo){
+        InstanceInfo instanceInfoFromDB = instanceInfoDao.queryByHostAndPort(instanceInfo.getHost(), instanceInfo.getPort());
+        if (null != instanceInfoFromDB){
+            instanceInfoFromDB.setPassword(instanceInfo.getPassword());
+            instanceInfoDao.update(instanceInfoFromDB);
+        }else{
+            instanceInfoDao.addInstanceInfo(instanceInfo);
+        }
     }
 
 }

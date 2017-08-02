@@ -91,7 +91,7 @@ public class EtcdUtil {
             EtcdKeysResponse.EtcdNode node = response.getNode();
             List<EtcdKeysResponse.EtcdNode> listNodes = node.getNodes();
             for (EtcdKeysResponse.EtcdNode node1 : listNodes){
-                String hostAndPort = node1.getKey().substring(Etcd_Machine_Bath_Path.length());
+                String hostAndPort = node1.getKey().substring(Etcd_App_Bath_Path.length());
                 String host = hostAndPort.split(":")[0];
                 int port = Integer.valueOf(hostAndPort.split(":")[1].trim());
                 appList.add(new HostAndPort(host, port));

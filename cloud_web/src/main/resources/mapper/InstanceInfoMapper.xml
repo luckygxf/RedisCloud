@@ -15,4 +15,10 @@
     <insert id="addInstanceInfo" parameterType="com.gxf.entity.InstanceInfo">
         insert into instance_info(host, port, password) VALUES (#{host}, #{port}, #{password})
     </insert>
+    <select id="queryByHostAndPort" resultType="com.gxf.entity.InstanceInfo">
+        SELECT  * from instance_info where host = #{host} and port = #{port};
+    </select>
+    <update id="update">
+        UPDATE instance_info set password=#{password} where id=#{id}
+    </update>
 </mapper>

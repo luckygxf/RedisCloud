@@ -8,6 +8,7 @@ import com.gxf.dao.impl.InstanceStaticsDaoImpl;
 import com.gxf.entity.InstanceInfo;
 import com.gxf.entity.InstanceStatics;
 import com.gxf.enums.InstanceRoleEnum;
+import com.gxf.enums.InstanceStatusEnum;
 import com.gxf.redis.RedisTask;
 import com.gxf.util.EtcdUtil;
 import com.gxf.util.HostAndPort;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by 58 on 2017/8/2.
@@ -33,10 +35,8 @@ public class RedisTaskImpl implements RedisTask {
 
 
     public static void main(String[] args) {
-        String ip = "192.168.211.131";
-        int port = 6340;
-        String password = "vdrg3fbxcez0b72e";
-        InstanceStatics instanceStatics = new RedisTaskImpl().getRedisInstanceInfo(ip, port, password);
+        RedisTask task = new RedisTaskImpl();
+        scheduledExecutorService.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
     }
     /**
      * 定期监控redis实例
@@ -67,6 +67,11 @@ public class RedisTaskImpl implements RedisTask {
         InstanceStatics instanceStatics =  processInfo(info);
         instanceStatics.setIp(ip);
         instanceStatics.setPort(port);
+        if(!StringUtil.isEmpty(info)){
+            instanceStatics.setIsRun(InstanceStatusEnum.RUNNING.getValue());
+        }else{
+            instanceStatics.setIsRun(InstanceStatusEnum.NOT_RUN.getValue());
+        }
         return instanceStatics;
     }
 
@@ -96,20 +101,26 @@ public class RedisTaskImpl implements RedisTask {
                 redisStatMap.put(keyValue[0].trim(), keyValue[1].trim());
             }
         }
-        //填充instanceStatics
-        String role = redisStatMap.get("role");
-        instanceStatics.setRole(InstanceRoleEnum.getValueByDesc(role));
-        instanceStatics.setMaxMemory(Long.valueOf(redisStatMap.get("maxmemory")));
-        instanceStatics.setUsedMemory(Long.valueOf(redisStatMap.get("used_memory")));
-        //# Keyspace
-        //db0:keys=3,expires=0,avg_ttl=0
-        String db0 = redisStatMap.get("db0");
-        String keys = db0.split(",")[0];
-        instanceStatics.setCurrItems(Long.valueOf(keys.substring("keys=".length())));
-        instanceStatics.setCurrConnections(Integer.valueOf(redisStatMap.get("connected_clients")));
-        instanceStatics.setMisses(Long.valueOf(redisStatMap.get("keyspace_misses")));
-        instanceStatics.setHits(Long.valueOf(redisStatMap.get("keyspace_hits")));
-        instanceStatics.setModifyTime(new Date());
+        try{
+            //填充instanceStatics
+            String role = redisStatMap.get("role");
+            instanceStatics.setRole(InstanceRoleEnum.getValueByDesc(role));
+            instanceStatics.setMaxMemory(Long.valueOf(redisStatMap.get("maxmemory")));
+            instanceStatics.setUsedMemory(Long.valueOf(redisStatMap.get("used_memory")));
+            //# Keyspace
+            //db0:keys=3,expires=0,avg_ttl=0
+            String db0 = redisStatMap.get("db0");
+            if(null != db0){
+                String keys = db0.split(",")[0];
+                instanceStatics.setCurrItems(Long.valueOf(keys.substring("keys=".length())));
+            }
+            instanceStatics.setCurrConnections(Integer.valueOf(redisStatMap.get("connected_clients")));
+            instanceStatics.setMisses(Long.valueOf(redisStatMap.get("keyspace_misses")));
+            instanceStatics.setHits(Long.valueOf(redisStatMap.get("keyspace_hits")));
+            instanceStatics.setModifyTime(new Date());
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
         return instanceStatics;
     }
 
