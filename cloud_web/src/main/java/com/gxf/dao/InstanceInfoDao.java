@@ -4,6 +4,8 @@ import com.gxf.entity.InstanceInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Created by 58 on 2017/7/27.
  */
@@ -25,4 +27,14 @@ public interface InstanceInfoDao {
      * 更新记录
      * */
     void update(InstanceInfo instanceInfo);
+
+    /**
+     * 查询所有记录
+     * */
+    List<InstanceInfo> queryAll();
+
+    /**
+     * 根据id查询记录
+     * */
+    InstanceInfo queryById(@Param("id")int id);
 }

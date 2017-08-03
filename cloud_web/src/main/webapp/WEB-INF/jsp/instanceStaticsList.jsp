@@ -5,10 +5,8 @@
 <head>
     <title>redis实例统计信息</title>
 </head>
-
-</head>
 <body>
-<h1>机器统计信息</h1>
+<h1>redis实例信息</h1>
     <table class="table table-bordered">
         <thead>
             <th>IP</th>
@@ -29,16 +27,38 @@
                 <tr>
                     <td>${instanceStatics.ip}</td>
                     <td>${instanceStatics.port}</td>
-                    <td>${instanceStatics.role}</td>
-                    <td>${instanceStatics.maxMemory}</td>
-                    <td>${instanceStatics.usedMemory}</td>
+                    <td>
+                        <c:if test="${instanceStatics.role == 1}">
+                            master
+                        </c:if>
+                        <c:if test="${instanceStatics.role == 2}">
+                            slave
+                        </c:if>
+                    </td>
+                    <td>
+                        <fmt:formatNumber type="number" maxFractionDigits="2" value="${instanceStatics.maxMemory / 1024 / 1024}" />MB
+                    </td>
+                    <td>
+                        <fmt:formatNumber type="number" maxFractionDigits="2" value="${instanceStatics.usedMemory / 1024 / 1024}" />MB
+                    </td>
                     <td>${instanceStatics.currItems}</td>
                     <td>${instanceStatics.currConnections}</td>
                     <td>${instanceStatics.misses}</td>
                     <td>${instanceStatics.hits}</td>
-                    <td>${instanceStatics.modifyTime}</td>
-                    <td>${instanceStatics.createTime}</td>
-                    <td>${instanceStatics.isRun}</td>
+                    <td>
+                        <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${instanceStatics.modifyTime}" />
+                    </td>
+                    <td>
+                        <fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${instanceStatics.createTime}" />
+                    </td>
+                    <td>
+                        <c:if test="${instanceStatics.isRun == 1}">
+                            运行中
+                        </c:if>
+                        <c:if test="${instanceStatics.isRun == 2}">
+                            已下线
+                        </c:if>
+                    </td>
                 </tr>
             </c:forEach>
         </tbody>

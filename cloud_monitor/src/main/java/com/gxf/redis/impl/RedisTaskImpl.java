@@ -33,8 +33,10 @@ public class RedisTaskImpl implements RedisTask {
     private static InstanceInfoDao instanceInfoDao = new InstanceInfoDaoImpl();
     private static ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
 
-
-    public static void main(String[] args) {
+    /**
+     * 启动对redis的monitor
+     * */
+    public static void start() {
         RedisTask task = new RedisTaskImpl();
         scheduledExecutorService.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
     }

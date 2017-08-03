@@ -13,4 +13,5 @@
     <bean id="redisCenter" class="com.gxf.redis.redisImpl.RedisCenterImpl"/>
     <bean id="redisDeployCenter" class="com.gxf.redis.redisImpl.RedisDeployCenterImpl"/>
     <bean id="systemExceptionResolver" class="com.gxf.web.utils.SystemExceptionResolver"/>
+    <bean id="machineCenter" class="com.gxf.machine.impl.MachineCenterImpl"/>
 </beans>

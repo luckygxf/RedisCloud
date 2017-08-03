@@ -29,7 +29,10 @@ public class MachineTaskImpl implements MachineTask {
     private static MachineStaticsDao machineStaticsDao = new MachineStaticsDaoImpl();
     private static ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(5);
 
-    public static void main(String[] args) {
+    /**
+     * 启动对机器的monitor
+     * */
+    public static void start() {
         MachineTask task = new MachineTaskImpl();
         scheduledExecutorService.scheduleAtFixedRate(task, 0, 60, TimeUnit.SECONDS);
     }

@@ -13,6 +13,8 @@ public class InstanceInfo {
     private int port;
     //密码
     private String password;
+    //运行状态
+    private byte status;
 
     public InstanceInfo(String host, int port, String password) {
         this.host = host;
@@ -53,5 +55,13 @@ public class InstanceInfo {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(byte status) {
+        this.status = status;
     }
 }

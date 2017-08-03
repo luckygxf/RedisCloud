@@ -1,7 +1,9 @@
 package com.gxf.web.controller;
 
 import com.gxf.common.util.ConstUtil;
+import com.gxf.dao.InstanceInfoDao;
 import com.gxf.entity.InstanceInfo;
+import com.gxf.machine.MachineCenter;
 import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
 import com.gxf.util.EtcdUtil;
@@ -27,6 +29,10 @@ public class AppManageController {
     private RedisCenter redisCenter;
     @Autowired
     private RedisDeployCenter redisDeployCenter;
+    @Autowired
+    private InstanceInfoDao instanceInfoDao;
+    @Autowired
+    private MachineCenter machineCenter;
     private static Logger logger = LoggerFactory.getLogger(AppManageController.class);
 
     @RequestMapping("/initAppDeploy")
@@ -63,5 +69,23 @@ public class AppManageController {
             EtcdUtil.createInstanceNode(slaveHost, slavePort);
         }
         return new ModelAndView("initAppDeploy");
+    }
+
+    /**
+     * 启动redis实例
+     * */
+    @RequestMapping("/startRedisInstance")
+    public void startRedisInstance(HttpServletRequest httpServletRequest){
+        //这里需要前端传回ip、端口
+        //查询数据库，传redis密码给agent
+        String host = httpServletRequest.getParameter("host");
+        int port = Integer.valueOf(httpServletRequest.getParameter("port").trim());
+        InstanceInfo instanceInfo = instanceInfoDao.queryByHostAndPort(host, port);
+        boolean isSuccess = machineCenter.startProcessAtPort(host, port, ConstUtil.CACHE_REDIS_STANDALONE, instanceInfo.getPassword());
+        if(isSuccess){
+            logger.info("start redis instance success, host:{}, port:{}", host, port);
+        }else{
+            logger.error("start redis instance failed, host:{}, port:{}", host, port);
+        }
     }
 }
