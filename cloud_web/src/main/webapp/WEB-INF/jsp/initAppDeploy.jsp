@@ -43,13 +43,13 @@
     <div class="form-group">
         <label for="host" class="col-sm-1 control-label">Redis IP</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="slaveHost" name="slaveHost" placeholder="slave IP" value="192.168.211.131"/>
+            <input type="text" class="form-control" id="slaveHost" name="slaveHost" placeholder="slave IP" value="192.168.211.132"/>
         </div>
     </div>
     <div class="form-group">
         <label for="port" class="col-sm-1 control-label">Redis Port</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="slavePort" name="slavePort" placeholder="Redis Port" value="6341"/>
+            <input type="text" class="form-control" id="slavePort" name="slavePort" placeholder="Redis Port" value="6340"/>
         </div>
     </div>
     <div class="form-group">
