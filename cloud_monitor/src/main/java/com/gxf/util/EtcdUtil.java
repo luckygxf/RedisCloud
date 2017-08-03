@@ -1,5 +1,6 @@
 package com.gxf.util;
 
+import mousio.client.promises.ResponsePromise;
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.promises.EtcdResponsePromise;
 import mousio.etcd4j.responses.EtcdKeysResponse;
@@ -25,10 +26,11 @@ public class EtcdUtil {
 
     public static void main(String[] args) {
 //        createMachineNode("192.168.211.131");
-        List<HostAndPort> list = getAllAppList();
-        for(HostAndPort hostAndPort : list){
-            System.out.println(hostAndPort.getHost() + ":" + hostAndPort.getPort());
-        }
+//        List<HostAndPort> list = getAllAppList();
+//        for(HostAndPort hostAndPort : list){
+//            System.out.println(hostAndPort.getHost() + ":" + hostAndPort.getPort());
+//        }
+        waitForMachineListChange();
     }
 
     static {
@@ -102,4 +104,43 @@ public class EtcdUtil {
         return appList;
     }
 
+    /**
+     * 监听machine list改变事件
+     * */
+    public static void waitForMachineListChange(){
+        EtcdResponsePromise promise = null;
+        try{
+            System.out.println("start listen..");
+            promise = etcd.get(Etcd_Machine_Bath_Path).recursive().waitForChange().send();
+            promise.addListener(new ModifyHandler(promise));
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * etcd key改变回调处理
+     * */
+    static class ModifyHandler implements ResponsePromise.IsSimplePromiseResponseHandler{
+        private EtcdResponsePromise promise;
+
+        public ModifyHandler(EtcdResponsePromise promise) {
+            this.promise = promise;
+        }
+
+        public void onResponse(ResponsePromise response) {
+            System.out.println("receive from etcd server");
+            System.out.println(response);
+            EtcdKeysResponse etcdKeysResponse = (EtcdKeysResponse) response.getNow();
+            System.out.println(etcdKeysResponse.getNode().getValue());
+            try {
+                promise = etcd.get(Etcd_Machine_Bath_Path).recursive().waitForChange().send();
+                promise.addListener(new ModifyHandler(promise));
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
 }
+
+

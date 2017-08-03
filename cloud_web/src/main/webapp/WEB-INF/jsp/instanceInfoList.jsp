@@ -40,7 +40,7 @@
     </script>
 </head>
 <body>
-<h1>机器统计信息</h1>
+<h1>redis实例信息</h1>
     <table class="table table-bordered">
         <thead>
             <th>host</th>

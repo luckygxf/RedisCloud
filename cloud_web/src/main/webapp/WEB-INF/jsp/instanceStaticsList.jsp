@@ -53,10 +53,10 @@
                     </td>
                     <td>
                         <c:if test="${instanceStatics.isRun == 1}">
-                            运行中
+                            正常运行
                         </c:if>
                         <c:if test="${instanceStatics.isRun == 2}">
-                            已下线
+                            心跳停止
                         </c:if>
                     </td>
                 </tr>

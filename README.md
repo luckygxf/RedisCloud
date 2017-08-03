@@ -11,3 +11,5 @@
 6. etcd存放的数据
     1. machineliest:/com/gxf/redis/cloud/machinelist/ip
     2. applist:/com/gxf/redis/cloud/applist/host:port
+7. monitor:
+    1. redis info没有获取到内容，redis可以判为下线，可以作为监控，发送通知给负责人进行处理

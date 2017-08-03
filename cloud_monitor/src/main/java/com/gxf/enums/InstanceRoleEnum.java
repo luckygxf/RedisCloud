@@ -5,7 +5,9 @@ package com.gxf.enums;
  */
 public enum InstanceRoleEnum {
     MASTER((byte)1, "master"),
-    SLAVE((byte)2, "slave");
+    SLAVE((byte)2, "slave"),
+    SENTINEL((byte)3, "sentinel")
+    ;
 
     public static void main(String[] args) {
         String desc = "slave";

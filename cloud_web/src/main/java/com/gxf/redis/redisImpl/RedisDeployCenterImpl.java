@@ -164,6 +164,10 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         saveOrUpdate(masterInstanceInfo);
         InstanceInfo slaveInstatnceInfo = new InstanceInfo(slaveHost, slavePort, password);
         saveOrUpdate(slaveInstatnceInfo);
+        for(int i = 0; i < sentinelPorts.length; i++){
+            InstanceInfo sentinelInfo = new InstanceInfo(sentinelIps[0], sentinelPorts[i], password);
+            saveOrUpdate(sentinelInfo);
+        }
         return true;
     }
 

@@ -91,6 +91,12 @@ public class RedisTaskImpl implements RedisTask {
      * */
     private InstanceStatics processInfo(String info){
         InstanceStatics instanceStatics = new InstanceStatics();
+        //info没有内容
+        if(StringUtil.isEmpty(info)){
+            instanceStatics.setIsRun(InstanceStatusEnum.RUNNING.getValue());
+        }else{
+            instanceStatics.setIsRun(InstanceStatusEnum.NOT_RUN.getValue());
+        }
         //把所有info数据放到一个map里
         Map<String, String> redisStatMap = new HashMap<String, String>();
         String statData[] = info.split("\r\n");
