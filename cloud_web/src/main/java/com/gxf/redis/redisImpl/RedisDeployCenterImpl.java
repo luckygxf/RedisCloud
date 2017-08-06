@@ -153,7 +153,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
                 , slaveHost, slavePort);
 
         //1.4 运行sentinel group
-        boolean isSentinelRun = runSentinelGroup(sentinelIps[0], sentinelPorts, masterHost, masterPort, password, jedisList);
+        boolean isSentinelRun = runSentinelGroup(sentinelIps, sentinelPorts, masterHost, masterPort, password, jedisList);
         if(!isSentinelRun){
             logger.error("runSentinelGroup failed. sentileIp:{}, sentinel ports:{}", sentinelIps[0], sentinelPorts);
             return false;
@@ -165,7 +165,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         InstanceInfo slaveInstatnceInfo = new InstanceInfo(slaveHost, slavePort, password);
         saveOrUpdate(slaveInstatnceInfo);
         for(int i = 0; i < sentinelPorts.length; i++){
-            InstanceInfo sentinelInfo = new InstanceInfo(sentinelIps[0], sentinelPorts[i], password);
+            InstanceInfo sentinelInfo = new InstanceInfo(sentinelIps[i], sentinelPorts[i], password);
             saveOrUpdate(sentinelInfo);
         }
         return true;
@@ -405,7 +405,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
      * 这里由于在虚拟机中部署
      * ip是一个，端口有多个
      * */
-    private boolean runSentinelGroup(String sentinelIp,int sentinelPorts[], String masterHost, int masterPort, String password, List<WebJedis> jedisList){
+    private boolean runSentinelGroup(String sentinelIps[],int sentinelPorts[], String masterHost, int masterPort, String password, List<WebJedis> jedisList){
         String masterName = getMasterName(masterHost, masterPort);
 
         String sentinelConfNames[] = new String[sentinelPorts.length];
@@ -415,7 +415,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         //port-->configs
         Map<Integer, List<String>> sentinelConfigMap = new HashMap<Integer, List<String>>();
         for(int i = 0 ; i < sentinelPorts.length; i++){
-            List<String> sentinelConfigs = SentinelConfigUtil.getSentinelConfigs(masterHost, masterPort, password, masterName, sentinelIp, sentinelPorts[i]);
+            List<String> sentinelConfigs = SentinelConfigUtil.getSentinelConfigs(masterHost, masterPort, password, masterName, sentinelIps[i], sentinelPorts[i]);
             sentinelConfigMap.put(sentinelPorts[i], sentinelConfigs);
         }
         String machinePaths[] = new String[sentinelPorts.length];
@@ -431,19 +431,19 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         //开始部署sentinel实例
         boolean isPortUsed = false;
         for(int i = 0; i < sentinelPorts.length; i++){
-            isPortUsed = AgentCommunication.isPortUsed(sentinelIp, sentinelPorts[i]);
+            isPortUsed = AgentCommunication.isPortUsed(sentinelIps[i], sentinelPorts[i]);
             if(isPortUsed){
-                logger.error("port:{} is already used in the host:{}", sentinelPorts[i], sentinelIp);
+                logger.error("port:{} is already used in the host:{}", sentinelPorts[i], sentinelIps[i]);
                 return false;
             } //if
 
-            boolean isRun = AgentCommunication.runSentinel(sentinelIp, sentinelPorts[i], sentinelConfNames[i], sentinelConfigMap.get(sentinelPorts[i]),
+            boolean isRun = AgentCommunication.runSentinel(sentinelIps[i], sentinelPorts[i], sentinelConfNames[i], sentinelConfigMap.get(sentinelPorts[i]),
                                                             runShells[i], machinePaths[i]);
             if(!isRun){
                 logger.error("runSentinel, sentienlPort:{}, masterName:{}, configFileName:{} failed.", sentinelPorts[i], masterName, sentinelConfNames[i]);
                 return false;
             }
-            WebJedis webJedis = new WebJedis(sentinelIp, sentinelPorts[i]);
+            WebJedis webJedis = new WebJedis(sentinelIps[i], sentinelPorts[i]);
             jedisList.add(webJedis);
         } //for
 

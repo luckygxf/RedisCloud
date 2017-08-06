@@ -54,8 +54,8 @@ public class AppManageController {
         String slaveHost = request.getParameter("slaveHost");
         int slavePort = Integer.valueOf(request.getParameter("slavePort").trim());
         String[] slaveHosts = {slaveHost};
-        String[] sentinelIps = {"192.168.211.131"};
-        int sentinelPorts[] = {26340, 26341, 26342};
+        String[] sentinelIps = {"192.168.211.131", "192.168.211.132", "192.168.211.133"};
+        int sentinelPorts[] = {26340, 26340, 26340};
         int type = ConstUtil.CACHE_REDIS_STANDALONE;
         List<WebJedis> webJedisList = new ArrayList<WebJedis>();
 

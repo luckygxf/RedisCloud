@@ -9,7 +9,7 @@
         <div class="form-group">
             <label for="host" class="col-sm-1 control-label">Redis IP</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="host" name="host" placeholder="请输入IP" value="192.168.211.131"/>
+                <input type="text" class="form-control" id="host" name="host" placeholder="请输入IP" value="192.168.211.133"/>
             </div>
         </div>
         <div class="form-group">
