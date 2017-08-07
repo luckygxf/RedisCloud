@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package com.gxf.udp.proto;
+option java_outer_classname="HeartbeatInfo_Pb";
+
+message HeartBeatInfo {
+    string appKey = 1;
+
+    int32 shardNum = 2;
+
+    string shardInfo = 3;
+
+    string sentinels = 4;
+
+    string masterName = 5;
+
+    string standalone = 6;
+
+    int32 status = 7;   //client version check: 1:GOOD; 0:WARN; -1:ERROR
+
+    string msg = 8;     //error msg
+
+    string reportIp = 9;
+
+    int32 type = 10;
+
+    string password = 11;
+
+    string proxyAddrs = 12;
+}

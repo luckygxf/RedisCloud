@@ -1,0 +1,48 @@
+syntax = "proto3";
+package com.gxf.udp.proto;
+option java_outer_classname="ClientReportBean_Pb";
+
+message CostTimeData{
+    int64 cost_count = 1;
+    string cost_command = 2;
+    string cost_host_port = 3;
+    int32 cost_time_90_max = 4;
+    int32 cost_time_99_max = 5;
+    int32 cost_time_100_max = 6;
+    double cost_time_mean = 7;
+    int32 cost_time_median = 8;
+    int32 client_data_type = 9;     //1:cost_time_distri_type, 2:value_length_distri_type
+}
+
+message ValueDistriData{
+    string value_distri = 1;
+    int64 value_count = 2;
+    string value_command = 3;
+    string value_host_port = 4;
+    int32 client_data_type = 5;     // 1:cost_time_distri_type, 2:value_length_distri_type
+}
+message ExceptionData{
+    string exception_class = 1;
+    string exception_msg = 2;
+    int64 exception_happen_time = 3;
+    string exception_host_port = 4;
+    int64 exception_count = 5;
+    int32 excepiton_type = 6;
+    int32 client_data_type = 7;     // 1:cost_time_distri_type, 2:value_length_distri_type
+}
+message ClientOtherReport{
+    int32 cost_map_size = 1;
+    int32 value_map_size = 2;
+    int32 exception_map_size = 3;
+    int32 collection_map_size = 4;
+}
+message ClientReportBean{
+    string app_key = 1;
+    string client_ip = 2;
+    int64 collect_time = 3;
+    int64 report_timestamp = 4;
+    repeated CostTimeData cost_time_data = 5;
+    repeated ValueDistriData value_distri_data = 6;
+    repeated ExceptionData exception_data = 7;
+    ClientOtherReport client_other_info = 8;
+}

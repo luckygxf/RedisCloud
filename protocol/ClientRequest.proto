@@ -1,0 +1,16 @@
+syntax = "proto3";
+package com.gxf.udp.proto;
+import "ClientReport.proto";
+
+option java_outer_classname="ClientRequestObject_Pb";
+
+message GetAppByIdParamObject{
+    string appKey = 1;
+    string clientVersion = 2;
+    string clientLanguage = 3;
+}
+message ClientReportParamObject{
+    string clientVersion = 1;
+    ClientReportBean reportData = 2;
+    string clientLanguage = 3;
+}
