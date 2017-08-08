@@ -3,6 +3,7 @@ package com.gxf.config.task;
 import com.gxf.common.constants.UDPResponseCode;
 import com.gxf.common.util.ArrayUtil;
 import com.gxf.config.util.PropertiesHelper;
+import com.gxf.udp.proto.ClientRequestObject_Pb;
 import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.socket.UdpServerSocket;
 import com.gxf.util.EtcdUtil;
@@ -41,7 +42,12 @@ public class Main {
             int resultCode = UDPResponseCode.SUCCESS;
             //接收到客户端发送的消息
             if(udpClientObject.getCommand().equals(UDPClientObject_Pb.RequestCommand.CMD_CLIENT_getAppInfoByKey)){
-                logger.info("receive cmd_client_getAppInfoByKey..");
+                //解析从客户端接收的内容
+                //appkey, clientverion , clientlanguag
+                ClientRequestObject_Pb.GetAppByIdParamObject getAppByIdParamObject = ClientRequestObject_Pb.GetAppByIdParamObject.parseFrom(udpClientObject.getParams());
+                logger.info("appKey = {}", getAppByIdParamObject.getAppKey());
+                logger.info("clientversion = {}", getAppByIdParamObject.getClientVersion());
+                logger.info("clientLanguage = {}", getAppByIdParamObject.getClientLanguage());
             }
         } //while
     }
