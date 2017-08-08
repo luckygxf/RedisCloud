@@ -21,6 +21,8 @@ public class EtcdUtil {
     private static Logger logger = LoggerFactory.getLogger(EtcdUtil.class);
     private static final String Etcd_Machine_Bath_Path = "/com/gxf/redis/cloud/machinelist/";
     private static final String Etcd_App_Bath_Path = "/com/gxf/redis/cloud/applist/";
+    private static final String Etcd_Config_Bath_Path = "/com/gxf/redis/cloud/config/";
+    private static final String Etcd_Monitor_Bath_Path = "/com/gxf/redis/cloud/monitor/";
     private static final String Status_Add = "add";
     private static EtcdClient etcd;
 
@@ -58,6 +60,19 @@ public class EtcdUtil {
             logger.info("add machine list success, host:{}", host);
         }  catch (Exception e) {
             logger.error("add machine list failed, host:{}", host);
+        }
+    }
+
+    /**
+     * 将配置中心注册到etcd
+     * */
+    public static void createConfigMasterNode(String host){
+        try{
+            etcd.put(Etcd_Config_Bath_Path + "configmaster", host).send().get();
+            logger.info("add config success, host:{}", host);
+        }catch (Exception e){
+            logger.error("add config failed, host:{}", host);
+            logger.error(e.getMessage(), e);
         }
     }
 
