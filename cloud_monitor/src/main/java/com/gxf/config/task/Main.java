@@ -41,8 +41,8 @@ public class Main {
             int resultCode = UDPResponseCode.SUCCESS;
             //接收到客户端发送的消息
             if(udpClientObject.getCommand().equals(UDPClientObject_Pb.RequestCommand.CMD_CLIENT_getAppInfoByKey)){
-
+                logger.info("receive cmd_client_getAppInfoByKey..");
             }
-        }
+        } //while
     }
 }
