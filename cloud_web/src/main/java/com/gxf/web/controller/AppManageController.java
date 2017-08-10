@@ -1,12 +1,15 @@
 package com.gxf.web.controller;
 
 import com.gxf.common.util.ConstUtil;
+import com.gxf.dao.AppDescDao;
 import com.gxf.dao.InstanceInfoDao;
+import com.gxf.entity.AppDesc;
 import com.gxf.entity.InstanceInfo;
 import com.gxf.machine.MachineCenter;
 import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
 import com.gxf.util.EtcdUtil;
+import com.gxf.util.PasswordUtil;
 import com.gxf.webJedis.WebJedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,6 +37,9 @@ public class AppManageController {
     private InstanceInfoDao instanceInfoDao;
     @Autowired
     private MachineCenter machineCenter;
+    @Autowired
+    private AppDescDao appDescDao;
+
     private static Logger logger = LoggerFactory.getLogger(AppManageController.class);
 
     @RequestMapping("/initAppDeploy")
@@ -58,8 +65,18 @@ public class AppManageController {
         int sentinelPorts[] = {26340, 26340, 26340};
         int type = ConstUtil.CACHE_REDIS_STANDALONE;
         List<WebJedis> webJedisList = new ArrayList<WebJedis>();
+        int appId = masterPort;
+        AppDesc appDesc = new AppDesc();
+        appDesc.setAppId(appId);
+        appDesc.setPassword(PasswordUtil.genRandomNum(16));
+        appDesc.setType(type);
+        appDesc.setName(String.valueOf(appId));
+        appDesc.setCreateTime(new Date());
+        appDesc.setAppKey(PasswordUtil.getAppkey());
+        appDesc.setAppPort(appId);
+        appDescDao.add(appDesc);
 
-        boolean isSuccess = redisDeployCenter.deploySentinelModel(masterHost, slaveHosts, type, sentinelIps, masterPort, slavePort, sentinelPorts, webJedisList);
+        boolean isSuccess = redisDeployCenter.deploySentinelModel(appId, masterHost, slaveHosts, type, sentinelIps, masterPort, slavePort, sentinelPorts, webJedisList);
         if(!isSuccess){
             logger.error("delpoySentinelModel failed");
         }

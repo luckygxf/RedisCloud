@@ -74,8 +74,8 @@ public class Test {
         int sentinelPorts[] = {26340, 26341, 26342};
         int type = ConstUtil.CACHE_REDIS_STANDALONE;
         List<WebJedis> webJedisList = new ArrayList<WebJedis>();
-
-        boolean isSuccess = redisDeployCenter.deploySentinelModel(masterHost, slaveHosts, type, sentinelIps, masterPort, slavePort, sentinelPorts, webJedisList);
+        int appid = 6340;
+        boolean isSuccess = redisDeployCenter.deploySentinelModel(appid, masterHost, slaveHosts, type, sentinelIps, masterPort, slavePort, sentinelPorts, webJedisList);
         if(!isSuccess){
             logger.error("delpoySentinelModel failed");
         }

@@ -24,7 +24,7 @@ public interface RedisDeployCenter {
     /**
      * 针对虚拟机部署，特殊需求
      * */
-    boolean deploySentinelModel(String masterHost, String[] slaveHosts, int type, String[] sentinelIps, int masterPort, int slavePort, int sentinelPorts[], List<WebJedis> jedisList);
+    boolean deploySentinelModel(int appid, String masterHost, String[] slaveHosts, int type, String[] sentinelIps, int masterPort, int slavePort, int sentinelPorts[], List<WebJedis> jedisList);
 
     /**
      * 针对虚拟机部署集群

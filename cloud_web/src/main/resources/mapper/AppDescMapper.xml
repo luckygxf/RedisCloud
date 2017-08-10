@@ -7,4 +7,7 @@
         INSERT INTO app_desc(app_id, `name`, app_port, status, intro, `create_time`, mem_size, `type`, password, app_key)
         VALUES (#{appId}, #{name}, #{appPort}, #{status}, #{intro}, #{createTime}, #{memSize}, #{type}, #{password}, #{appKey});
     </insert>
+    <select id="queryByAppid" parameterType="int" resultType="com.gxf.entity.AppDesc">
+        SELECT * FROM app_desc where app_id = #{appid};
+    </select>
 </mapper>

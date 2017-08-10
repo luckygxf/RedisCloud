@@ -77,6 +77,19 @@ public class EtcdUtil {
     }
 
     /**
+     * 将monitor注册到etcd
+     * */
+    public static void createMonitor(String host){
+        try{
+            etcd.put(Etcd_Monitor_Bath_Path + host, "").send().get();
+            logger.info("add monitor to etcd success, host:{}", host);
+        } catch (Exception e){
+            logger.error("add monitor to etcd failed, host:{}", host);
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
      * 获取所有需要监控的IP
      * 这里可以多装几个虚拟机
      * */

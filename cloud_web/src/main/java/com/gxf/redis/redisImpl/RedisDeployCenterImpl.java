@@ -4,8 +4,11 @@ import com.gxf.common.util.ConstUtil;
 import com.gxf.common.util.IdempotentConfirmer;
 import com.gxf.communication.AgentCommunication;
 import com.gxf.constant.EmptyObjectConst;
+import com.gxf.dao.AppDescDao;
 import com.gxf.dao.InstanceInfoDao;
+import com.gxf.entity.AppDesc;
 import com.gxf.entity.InstanceInfo;
+import com.gxf.enums.InstanceStatusEnum;
 import com.gxf.protocol.Protocol;
 import com.gxf.protocol.RedisProtocol;
 import com.gxf.redis.RedisCenter;
@@ -34,6 +37,8 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
     private RedisCenter redisCenter;
     @Autowired
     private InstanceInfoDao instanceInfoDao;
+    @Autowired
+    private AppDescDao appDescDao;
 
     @Override
     public boolean deploySentinelInstance(long appId, String masterHost, String[] slaveHosts, int maxMemory, String[] sentinelIps, int appPort, List<WebJedis> jedisList) {
@@ -80,11 +85,12 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
      * 部署哨兵模式
      * */
     @Override
-    public boolean deploySentinelModel(String masterHost, String[] slaveHosts,int type, String[] sentinelIps, int masterPort, int slavePort, int[] sentinelPorts, List<WebJedis> jedisList) {
+    public boolean deploySentinelModel(int appid, String masterHost, String[] slaveHosts,int type, String[] sentinelIps, int masterPort, int slavePort, int[] sentinelPorts, List<WebJedis> jedisList) {
         //1. 启动master实例
+        AppDesc appDesc = appDescDao.queryByAppid(appid);
+        String password = appDesc.getPassword();
         String configFileName = RedisProtocol.getConfigFileName(masterPort, type);
-        String password = PasswordUtil.genRandomNum(16);
-        List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(masterPort, password);
+        List<String> redisConfigs = RedisConfigUtil.getMinRedisInstanceConfig(masterPort, appDesc.getPassword());
         String masterauth = "masterauth %s";
         masterauth = String.format(masterauth, password);
         redisConfigs.add(masterauth);
@@ -161,11 +167,20 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         logger.info("runSentinelGroup success. sentileIp:{}, sentinel ports:{}", sentinelIps[0], sentinelPorts);
         //1.5 更新到数据库
         InstanceInfo masterInstanceInfo = new InstanceInfo(masterHost, masterPort, password);
+        masterInstanceInfo.setType(ConstUtil.CACHE_REDIS_STANDALONE);
+        masterInstanceInfo.setAppId(appid);
+        masterInstanceInfo.setStatus(InstanceStatusEnum.RUNNING.getValue());
         saveOrUpdate(masterInstanceInfo);
         InstanceInfo slaveInstatnceInfo = new InstanceInfo(slaveHost, slavePort, password);
+        slaveInstatnceInfo.setType(ConstUtil.CACHE_REDIS_STANDALONE);
+        slaveInstatnceInfo.setAppId(appid);
+        slaveInstatnceInfo.setStatus(InstanceStatusEnum.RUNNING.getValue());
         saveOrUpdate(slaveInstatnceInfo);
         for(int i = 0; i < sentinelPorts.length; i++){
             InstanceInfo sentinelInfo = new InstanceInfo(sentinelIps[i], sentinelPorts[i], password);
+            sentinelInfo.setAppId(appid);
+            sentinelInfo.setMasterName(getMasterName(masterHost, masterPort));
+            sentinelInfo.setType(ConstUtil.CACHE_REDIS_SENTINEL);
             saveOrUpdate(sentinelInfo);
         }
         return true;

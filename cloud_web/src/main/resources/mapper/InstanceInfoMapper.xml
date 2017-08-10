@@ -13,13 +13,13 @@
     <!--</resultMap>-->
 
     <insert id="addInstanceInfo" parameterType="com.gxf.entity.InstanceInfo">
-        insert into instance_info(host, port, password, status) VALUES (#{host}, #{port}, #{password}, #{status})
+        insert into instance_info(host, port, password, status, app_id, master_name, `type`) VALUES (#{host}, #{port}, #{password}, #{status}, #{appId}, #{masterName}, #{type})
     </insert>
     <select id="queryByHostAndPort" resultType="com.gxf.entity.InstanceInfo">
         SELECT  * from instance_info where host = #{host} and port = #{port};
     </select>
     <update id="update">
-        UPDATE instance_info set password=#{password}, status=#{status} where id=#{id};
+        UPDATE instance_info set password=#{password}, status=#{status}, app_id=#{appId}, master_name=#{masterName}, type=#{type} where id=#{id};
     </update>
     <select id="queryAll" resultType="com.gxf.entity.InstanceInfo">
         SELECT * FROM instance_info;

@@ -15,6 +15,13 @@ public class InstanceInfo {
     private String password;
     //运行状态
     private byte status;
+    //appid
+    private int appId;
+    //master name
+    private String masterName;
+    //type
+    private int type;
+
 
     public InstanceInfo(String host, int port, String password) {
         this.host = host;
@@ -63,5 +70,29 @@ public class InstanceInfo {
 
     public void setStatus(byte status) {
         this.status = status;
+    }
+
+    public int getAppId() {
+        return appId;
+    }
+
+    public void setAppId(int appId) {
+        this.appId = appId;
+    }
+
+    public String getMasterName() {
+        return masterName;
+    }
+
+    public void setMasterName(String masterName) {
+        this.masterName = masterName;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }
