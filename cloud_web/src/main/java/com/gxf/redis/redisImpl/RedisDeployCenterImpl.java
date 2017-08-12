@@ -181,6 +181,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
             sentinelInfo.setAppId(appid);
             sentinelInfo.setMasterName(getMasterName(masterHost, masterPort));
             sentinelInfo.setType(ConstUtil.CACHE_REDIS_SENTINEL);
+            sentinelInfo.setStatus(InstanceStatusEnum.RUNNING.getValue());
             saveOrUpdate(sentinelInfo);
         }
         return true;

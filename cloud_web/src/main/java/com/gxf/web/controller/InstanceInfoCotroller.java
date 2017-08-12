@@ -49,7 +49,7 @@ public class InstanceInfoCotroller {
     public void startRedisInstance(HttpServletRequest request, HttpServletResponse response){
         int instanceInfoId = Integer.valueOf(request.getParameter("instanceInfoId").trim());
         InstanceInfo instanceInfo = instanceInfoDao.queryById(instanceInfoId);
-        boolean isSuccess = machineCenter.startProcessAtPort(instanceInfo.getHost(), instanceInfo.getPort(), ConstUtil.CACHE_REDIS_STANDALONE, instanceInfo.getPassword());
+        boolean isSuccess = machineCenter.startProcessAtPort(instanceInfo.getHost(), instanceInfo.getPort(), instanceInfo.getType(), instanceInfo.getPassword());
         if(isSuccess){
             logger.info("startRedisInstance success, host:{}, port{}", instanceInfo.getHost(), instanceInfo.getPort());
             instanceInfo.setStatus(InstanceStatusEnum.RUNNING.getValue());

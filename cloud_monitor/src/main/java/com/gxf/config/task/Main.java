@@ -48,6 +48,7 @@ public class Main {
                 logger.info("appKey = {}", getAppByIdParamObject.getAppKey());
                 logger.info("clientversion = {}", getAppByIdParamObject.getClientVersion());
                 logger.info("clientLanguage = {}", getAppByIdParamObject.getClientLanguage());
+
             }
         } //while
     }

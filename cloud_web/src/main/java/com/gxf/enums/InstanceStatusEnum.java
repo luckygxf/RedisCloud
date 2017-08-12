@@ -5,7 +5,7 @@ package com.gxf.enums;
  */
 public enum InstanceStatusEnum {
     RUNNING((byte)1, "运行中"),
-    NOT_RUN((byte)2, "没有运行")
+    NOT_RUN((byte)2, "已下线")
     ;
 
     private byte value;
