@@ -8,6 +8,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * Created by 58 on 2017/8/2.
  */
@@ -74,5 +76,30 @@ public class InstanceInfoDaoImpl implements InstanceInfoDao {
             }
         } //finally
         return instanceInfo;
+    }
+
+    public List<InstanceInfo> queryByAppId(int appId) {
+        SqlSession session = null;
+        List<InstanceInfo> listOfInstanceInfo = null;
+        try{
+            session = sessionFactory.openSession();
+            InstanceInfoDao instanceInfoDao = session.getMapper(InstanceInfoDao.class);
+            listOfInstanceInfo = instanceInfoDao.queryByAppId(appId);
+            session.commit();
+            if(session != null){
+                session.close();
+            }
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+        } finally {
+            if(session != null){
+                try{
+                    session.close();
+                } catch (Exception e){
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        } //finally
+        return listOfInstanceInfo;
     }
 }

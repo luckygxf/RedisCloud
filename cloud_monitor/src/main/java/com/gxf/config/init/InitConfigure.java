@@ -14,5 +14,6 @@ public class InitConfigure {
     public static void init(){
         Properties properties = PropertiesHelper.loadProperties("config.properties");
         ConstUtil.configCenterListenPort = Integer.parseInt(properties.get("config.port").toString().trim());
+        ConstUtil.monitorPort = Integer.parseInt((String) properties.get("monitor.port"));
     }
 }

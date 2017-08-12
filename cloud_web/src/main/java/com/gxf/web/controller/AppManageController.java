@@ -63,7 +63,7 @@ public class AppManageController {
         String[] slaveHosts = {slaveHost};
         String[] sentinelIps = {"192.168.211.131", "192.168.211.132", "192.168.211.133"};
         int sentinelPorts[] = {26340, 26340, 26340};
-        int type = ConstUtil.CACHE_REDIS_STANDALONE;
+        int type = ConstUtil.CACHE_REDIS_SENTINEL;
         List<WebJedis> webJedisList = new ArrayList<WebJedis>();
         int appId = masterPort;
         AppDesc appDesc = new AppDesc();

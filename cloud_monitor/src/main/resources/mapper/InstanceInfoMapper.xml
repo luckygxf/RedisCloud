@@ -18,4 +18,7 @@
     <select id="queryInstanceInfoByHostAndPort" resultType="com.gxf.entity.InstanceInfo">
         select * from instance_info where host=#{host} and port=#{port};
     </select>
+    <select id="queryByAppId" resultType="com.gxf.entity.InstanceInfo">
+        select * from instance_info where app_id=#{appId};
+    </select>
 </mapper>

@@ -32,7 +32,8 @@ public class EtcdUtil {
 //        for(HostAndPort hostAndPort : list){
 //            System.out.println(hostAndPort.getHost() + ":" + hostAndPort.getPort());
 //        }
-        waitForMachineListChange();
+//        waitForMachineListChange();
+        System.out.println("monitor = " + getMonitor());
     }
 
     static {
@@ -133,6 +134,24 @@ public class EtcdUtil {
     }
 
     /**
+     * 获取monitor值
+     * */
+    public static String getMonitor(){
+        String monitor = "";
+        try{
+            EtcdResponsePromise<EtcdKeysResponse> etcdResponsePromise = etcd.getDir(Etcd_Monitor_Bath_Path).recursive().send();
+            EtcdKeysResponse response = etcdResponsePromise.get();
+            EtcdKeysResponse.EtcdNode node = response.getNode();
+            List<EtcdKeysResponse.EtcdNode> listNodes = node.getNodes();
+            monitor = listNodes.get(0).getKey().substring(Etcd_Monitor_Bath_Path.length());
+        }catch (Exception e){
+            logger.error(e.getMessage(), e);
+            logger.error("Sysconfig get monitor failed.");
+        }
+        return monitor;
+    }
+
+    /**
      * 监听machine list改变事件
      * */
     public static void waitForMachineListChange(){
@@ -169,6 +188,8 @@ public class EtcdUtil {
             }
         }
     }
+
+
 }
 
 
