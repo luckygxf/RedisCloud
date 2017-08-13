@@ -34,7 +34,6 @@ public class Main {
 
     /**
      * 启动配置中心
-     * TODO:待完成
      * */
     public static void main(String[] args) throws Exception {
         Properties properties = PropertiesHelper.loadProperties("config.properties");
@@ -47,7 +46,7 @@ public class Main {
         EtcdUtil.createConfigMasterNode(localHost);
         logger.info("config center started...");
         while (true){
-            byte[] receives = udpServerSocket.receive();
+            byte[] receives = udpServerSocket.receive();    //block
             ArrayUtil.printByteArray(receives);
             UDPClientObject_Pb.UDPClientObject udpClientObject = UDPClientObject_Pb.UDPClientObject.parseFrom(receives);
             byte[] data = new byte[0];
