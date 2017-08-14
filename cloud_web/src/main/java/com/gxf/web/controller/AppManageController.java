@@ -105,4 +105,30 @@ public class AppManageController {
             logger.error("start redis instance failed, host:{}, port:{}", host, port);
         }
     }
+
+    @RequestMapping("/initDeployCluster")
+    public String initDeployCluster(){
+        return "deployCluster";
+    }
+
+    /**
+     * 部署集群模式
+     * */
+    @RequestMapping("/deployCluster")
+    public ModelAndView deployCluster(HttpServletRequest httpServletRequest){
+        String masterHost = httpServletRequest.getParameter("masterHost").trim();
+        String slaveHost = httpServletRequest.getParameter("slaveHost").trim();
+        String masterPort = httpServletRequest.getParameter("masterPort").trim();
+        String slavePort = httpServletRequest.getParameter("slavePort").trim();
+        int masterPorts[] = new int[masterPort.split(",").length];
+        int slavePorts[] = new int[slavePort.split(",").length];
+        for(int i = 0; i < masterPorts.length; i++){
+            masterPorts[i] = Integer.parseInt(masterPort.split(",")[i].trim());
+        }
+        for(int i = 0; i < slavePorts.length; i++){
+            slavePorts[i] = Integer.parseInt(slavePort.split(",")[i].trim());
+        }
+        redisDeployCenter.deployCluster(masterHost, slaveHost, masterPorts, slavePorts);
+        return new ModelAndView("deployCluster");
+    }
 }

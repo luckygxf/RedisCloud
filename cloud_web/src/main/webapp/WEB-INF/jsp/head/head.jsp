@@ -10,7 +10,17 @@
         </div>
         <div>
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/manage/app/initAppDeploy">部署Redis</a></li>
+                <%--<li class="active"><a href="/manage/app/initAppDeploy">部署Redis</a></li>--%>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        部署Redis
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/manage/app/initAppDeploy">Redis sentinel模式</a></li>
+                        <li><a href="/manage/app/initDeployCluster">Redis cluster模式</a></li>
+                    </ul>
+                </li>
                 <li><a href="/machinestatics/list">机器统计信息</a></li>
                 <li><a href="/instanceInfo/list">redis实例信息</a></li>
                 <li><a href="/instancestatics/list">redis实例统计信息</a></li>
