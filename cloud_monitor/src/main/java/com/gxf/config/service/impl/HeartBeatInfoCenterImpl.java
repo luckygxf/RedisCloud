@@ -29,6 +29,54 @@ public class HeartBeatInfoCenterImpl implements HeartBeatInfoCenter {
     //sentinels格式ip:port, ip:port..
     public HeartbeatInfo_Pb.HeartBeatInfo.Builder getHeartBeatInfoByAppKey(String appKey) {
         AppDesc appDesc = appDescDao.queryByAppkey(appKey);
+        if(appDesc.getType() == com.gxf.common.util.ConstUtil.CACHE_REDIS_SENTINEL){
+            return getSentinelHeartBeatInfo(appDesc);
+        }else {
+            return getClusterHeartBeatInfo(appDesc);
+        }
+    }
+
+    /**
+     * 对集群模式的app信息
+     * */
+    private HeartbeatInfo_Pb.HeartBeatInfo.Builder getClusterHeartBeatInfo(AppDesc appDesc){
+        //集群客户端需要type
+        //shardinfo ip1:port1,ip2:port2..
+        //reportIp ip:port
+        List<InstanceInfo> instanceInfoList = instanceInfoDao.queryByAppId(appDesc.getAppId());
+        //获取shardInfo
+        StringBuilder shardInfo = new StringBuilder();
+        for (int i = 0; i < instanceInfoList.size(); i++){
+            InstanceInfo instanceInfo = instanceInfoList.get(i);
+            if(!TypeUtil.isRedisCluster(instanceInfo.getType())){
+                continue;
+            } //if
+            shardInfo.append(instanceInfo.getHost());
+            shardInfo.append(":");
+            shardInfo.append(instanceInfo.getPort());
+            if(i != instanceInfoList.size() - 1){
+                shardInfo.append(",");
+            }
+        } //for
+        HeartbeatInfo_Pb.HeartBeatInfo.Builder heartBeatInfoBuilder = HeartbeatInfo_Pb.HeartBeatInfo.newBuilder();
+        //设置shardInfo
+        heartBeatInfoBuilder.setShardInfo(shardInfo.toString());
+        //设置type
+        heartBeatInfoBuilder.setType(appDesc.getType());
+        //设置reportIp
+        StringBuilder reportIp = new StringBuilder(EtcdUtil.getMonitor());
+        reportIp.append(":");
+        reportIp.append(ConstUtil.monitorPort);
+        heartBeatInfoBuilder.setReportIp(reportIp.toString());
+        //设置appkey
+        heartBeatInfoBuilder.setAppKey(appDesc.getAppKey());
+        return heartBeatInfoBuilder;
+    }
+
+    /**
+     * 获取哨兵模式的app信息
+     * */
+    private HeartbeatInfo_Pb.HeartBeatInfo.Builder getSentinelHeartBeatInfo(AppDesc appDesc){
         List<InstanceInfo> listOfInstanceInfo = instanceInfoDao.queryByAppId(appDesc.getAppId());
         StringBuilder sentinels = new StringBuilder();
         String masterName = "";
@@ -49,7 +97,7 @@ public class HeartBeatInfoCenterImpl implements HeartBeatInfoCenter {
         } //for
 
         HeartbeatInfo_Pb.HeartBeatInfo.Builder builder = HeartbeatInfo_Pb.HeartBeatInfo.newBuilder();
-        builder.setAppKey(appKey);
+        builder.setAppKey(appDesc.getAppKey());
         builder.setSentinels(sentinels.toString());
         builder.setMasterName(masterName);
         builder.setType(appDesc.getType());
@@ -59,7 +107,6 @@ public class HeartBeatInfoCenterImpl implements HeartBeatInfoCenter {
         reportIp.append(":");
         reportIp.append(ConstUtil.monitorPort);
         builder.setReportIp(reportIp.toString());
-
         return builder;
     }
 }
