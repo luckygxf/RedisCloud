@@ -17,4 +17,9 @@ public interface AppDescDao {
      * 根据appid查询app_desc
      * */
     AppDesc queryByAppid(@Param("appid") int appid);
+
+    /**
+     * 获取最大的appid
+     * */
+    int getMaxAppId();
 }

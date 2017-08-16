@@ -29,6 +29,14 @@ public class InstanceInfo {
         this.password = password;
     }
 
+    public InstanceInfo(String host, int port, byte status, int appId, int type) {
+        this.host = host;
+        this.port = port;
+        this.status = status;
+        this.appId = appId;
+        this.type = type;
+    }
+
     public InstanceInfo() {
     }
 

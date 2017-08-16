@@ -10,4 +10,7 @@
     <select id="queryByAppid" parameterType="int" resultType="com.gxf.entity.AppDesc">
         SELECT * FROM app_desc where app_id = #{appid};
     </select>
+    <select id="getMaxAppId" resultType="int">
+        SELECT max(app_id) FROM app_desc;
+    </select>
 </mapper>

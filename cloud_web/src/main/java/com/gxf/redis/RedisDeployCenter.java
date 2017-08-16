@@ -29,12 +29,12 @@ public interface RedisDeployCenter {
     /**
      * 针对虚拟机部署集群
      * */
-    boolean deployCluster(String masterHost, String slaveHost, int masterPorts[], int slavePorts[]);
+    boolean deployCluster(String masterHost, String slaveHost, int masterPorts[], int slavePorts[], int appId);
 
     /**
      * 部署redis集群
      * */
-    boolean deployClusterInstance(List<RedisClusterNode> nodes);
+    boolean deployClusterInstance(List<RedisClusterNode> nodes, int appId);
 
     /**
      * 下线指定的实例

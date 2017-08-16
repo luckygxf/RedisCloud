@@ -2,6 +2,7 @@ package com.gxf.communication;
 
 import com.gxf.common.constants.UDPResponseCode;
 import com.gxf.common.util.ConstUtil;
+import com.gxf.common.util.StringUtil;
 import com.gxf.udp.proto.UDPClientObject_Pb;
 import com.gxf.udp.proto.WebRequest_Pb;
 import com.gxf.udp.socket.ResultData;
@@ -121,7 +122,9 @@ public class AgentCommunication {
         startRedisInstanceAtPortParamObjectBuilder.setPort(port);
         startRedisInstanceAtPortParamObjectBuilder.setRunShell(runShell);
         startRedisInstanceAtPortParamObjectBuilder.setType(type);
-        startRedisInstanceAtPortParamObjectBuilder.setPassword(password);
+        if(!StringUtil.isEmpty(password)){
+            startRedisInstanceAtPortParamObjectBuilder.setPassword(password);
+        }
         udpClientObjectBuilder.setParams(startRedisInstanceAtPortParamObjectBuilder.build().toByteString());
         try{
             ResultData resultData = UDPClientSocket.sendMessage(ip, ConstUtil.AGENT_UDP_PORT, udpClientObjectBuilder);

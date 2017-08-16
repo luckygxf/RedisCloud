@@ -52,7 +52,7 @@ public class Test {
         int masterPorts[] = {6440, 6441, 6442};
         int slavePorts[] = {6543, 6544, 6545};
 
-        boolean result = redisDeployCenter.deployCluster(masterHost, slaveHost, masterPorts, slavePorts);
+        boolean result = redisDeployCenter.deployCluster(masterHost, slaveHost, masterPorts, slavePorts, 0);
         if(result){
             logger.info("deploy cluster sucess");
         }

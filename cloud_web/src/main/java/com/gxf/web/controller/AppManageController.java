@@ -5,6 +5,7 @@ import com.gxf.dao.AppDescDao;
 import com.gxf.dao.InstanceInfoDao;
 import com.gxf.entity.AppDesc;
 import com.gxf.entity.InstanceInfo;
+import com.gxf.enums.AppStatus;
 import com.gxf.machine.MachineCenter;
 import com.gxf.redis.RedisCenter;
 import com.gxf.redis.RedisDeployCenter;
@@ -128,7 +129,18 @@ public class AppManageController {
         for(int i = 0; i < slavePorts.length; i++){
             slavePorts[i] = Integer.parseInt(slavePort.split(",")[i].trim());
         }
-        redisDeployCenter.deployCluster(masterHost, slaveHost, masterPorts, slavePorts);
+        int appId = appDescDao.getMaxAppId() + 1;
+        redisDeployCenter.deployCluster(masterHost, slaveHost, masterPorts, slavePorts, appId);
+        AppDesc appDesc = new AppDesc();
+        appDesc.setAppId(appId);
+        appDesc.setName(String.valueOf(appId));
+        appDesc.setAppPort(0);
+        appDesc.setStatus(AppStatus.RUNNING.getValue());
+        appDesc.setCreateTime(new Date());
+        appDesc.setType(ConstUtil.CACHE_TYPE_REDIS_CLUSTER);
+        String appKey = PasswordUtil.getAppkey();
+        appDesc.setAppKey(appKey);
+        appDescDao.add(appDesc);
         return new ModelAndView("deployCluster");
     }
 }

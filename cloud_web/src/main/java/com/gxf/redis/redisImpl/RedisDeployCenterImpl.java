@@ -20,6 +20,7 @@ import com.gxf.webJedis.WebJedis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisDataException;
 import sun.management.AgentConfigurationError;
 
@@ -191,7 +192,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
      * 部署集群
      * */
     @Override
-    public boolean deployCluster(String masterHost, String slaveHost, int[] masterPorts, int[] slavePorts) {
+    public boolean deployCluster(String masterHost, String slaveHost, int[] masterPorts, int[] slavePorts, int appId) {
         List<WebJedis> clusterJedis = new ArrayList<WebJedis>();
 
         List<RedisClusterNode> clusterNodes = new ArrayList<RedisClusterNode>();
@@ -204,7 +205,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
             clusterJedis.add(new WebJedis(slaveHost, slavePorts[i]));
         }
         //开始部署集群
-        boolean result = deployClusterInstance(clusterNodes);
+        boolean result = deployClusterInstance(clusterNodes, appId);
 
         if(!result){
             logger.error("deploy cluster instance failed rollback");
@@ -217,7 +218,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
      * 根据节点部署集群
      * */
     @Override
-    public boolean deployClusterInstance(List<RedisClusterNode> nodes) {
+    public boolean deployClusterInstance(List<RedisClusterNode> nodes, int appId) {
         String confFileNames[] = new String[nodes.size() * 2];
         //port --> redisConfig
         Map<Integer, List<String>> mapOfRedisConfigs = new HashMap<Integer, List<String>>();
@@ -284,6 +285,15 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
         if(!isClusterSuccess){
             logger.error("start cluster failed.");
             return false;
+        }
+        //保存instanceInfo到数据库
+        for(Map.Entry<WebJedis, WebJedis> entry : clusterMap.entrySet()){
+            Jedis master = entry.getKey();
+            Jedis slave = entry.getValue();
+            InstanceInfo masterInfo = new InstanceInfo(master.getClient().getHost(), master.getClient().getPort(), InstanceStatusEnum.RUNNING.getValue(), appId, ConstUtil.CACHE_TYPE_REDIS_CLUSTER);
+            saveOrUpdate(masterInfo);
+            InstanceInfo slaveInfo = new InstanceInfo(slave.getClient().getHost(), slave.getClient().getPort(), InstanceStatusEnum.RUNNING.getValue(), appId, ConstUtil.CACHE_TYPE_REDIS_CLUSTER);
+            saveOrUpdate(slaveInfo);
         }
         return true;
     }
@@ -768,8 +778,7 @@ public class RedisDeployCenterImpl implements RedisDeployCenter {
     private void saveOrUpdate(InstanceInfo instanceInfo){
         InstanceInfo instanceInfoFromDB = instanceInfoDao.queryByHostAndPort(instanceInfo.getHost(), instanceInfo.getPort());
         if (null != instanceInfoFromDB){
-            instanceInfoFromDB.setPassword(instanceInfo.getPassword());
-            instanceInfoDao.update(instanceInfoFromDB);
+            instanceInfoDao.update(instanceInfo);
         }else{
             instanceInfoDao.addInstanceInfo(instanceInfo);
         }
