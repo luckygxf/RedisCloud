@@ -24,7 +24,8 @@
                 <li><a href="/machinestatics/list">机器统计信息</a></li>
                 <li><a href="/instanceInfo/list">redis实例信息</a></li>
                 <li><a href="/instancestatics/list">redis实例统计信息</a></li>
-                <li class="dropdown">
+                <li><a href="/manage/app/initHorizontalScaleApply">集群添加分片</a></li>
+                    <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         待扩展
                         <b class="caret"></b>

@@ -143,4 +143,13 @@ public class AppManageController {
         appDescDao.add(appDesc);
         return new ModelAndView("deployCluster");
     }
+
+    /**
+     * 跳转到增加分片页面
+     * */
+    @RequestMapping("/initHorizontalScaleApply")
+    public ModelAndView initHorizontalScaleApply(){
+        return new ModelAndView("initHorizontalScaleApply");
+    }
+
 }
